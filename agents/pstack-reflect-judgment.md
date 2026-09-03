@@ -1,7 +1,7 @@
 ---
 name: pstack-reflect-judgment
 description: "Pstack reflect-judgment role: review through the judgment lens"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 ---
 

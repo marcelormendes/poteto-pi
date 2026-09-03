@@ -1,7 +1,7 @@
 ---
 name: pstack-how-critics-3
 description: "Pstack how-critics seat 3"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: medium
 tools: [read, grep, find, ls]
 ---

@@ -1,7 +1,7 @@
 ---
 name: pstack-perf-issue
 description: "Pstack perf role: trace measured slowness against a baseline"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 ---
 

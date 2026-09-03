@@ -1,7 +1,7 @@
 ---
 name: pstack-bug-fix
 description: "Pstack bug-fix role: reproduce, root-cause, fix with runtime evidence"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 ---
 

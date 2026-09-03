@@ -1,7 +1,7 @@
 ---
 name: pstack-interrogate-reviewers-1
 description: "Pstack interrogate-reviewers seat 1"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 tools: [read, grep, find, ls]
 ---

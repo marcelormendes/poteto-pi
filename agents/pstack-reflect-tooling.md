@@ -1,7 +1,7 @@
 ---
 name: pstack-reflect-tooling
 description: "Pstack reflect-tooling role: review through the tooling lens"
-model: opencode-go/gpt-5.6-sol
+model: openai-codex/gpt-5.6-sol
 thinking: medium
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: pstack-arena-cross-judges-1
 description: "Pstack arena-cross-judges seat 1"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 tools: [read, grep, find, ls]
 ---

@@ -17,24 +17,11 @@ Run `pi --list-models`. That table is the dependable source: each row is a provi
 
 If `~/.pi/agent/pstack/models.md` already exists, read it and treat its values as the current choices. Otherwise start from the default table in step 5.
 
-### 3. Resolve the defaults, then ask the user to replace each one
+### 3. Confirm or replace each default with the user
 
-The step-5 table is shorthand, not valid selectors. Resolve every entry
-against `pi --list-models` before showing it:
-
-- provider shorts: `codex` is `openai-codex`, `go` is `opencode-go`.
-- model shorts match by substring against the detected table: `sol`
-matches the GPT judgment model, `flash-vision` the vision model,
-  `glm-5.3-flash` itself. Confirm each match with the user.
-- thinking suffixes must be one of `off, minimal, low, medium, high,
-  xhigh, max`: `extra-high` resolves to `xhigh`, `max` and `high` pass
-  through. A suffix with no PI meaning (for example `FAST`) resolves to
-  nothing: keep the entry flagged and ask the user what they meant.
-  Never guess a resolution silently.
-
-Then walk the user role by role through the resolved table: show the
-default, ask to accept or replace it, offer detected selectors as the
-options. For panel roles (how critics, arena runners, architect runners,
+Walk the user role by role through the table below: show the default,
+ask to accept or replace it, offer detected selectors as the options.
+For panel roles (how critics, arena runners, architect runners,
 interrogate reviewers) the value is a list, and one sequential pass runs
 per entry, so the list length sets the pass count. `arena cross-judge
 pool` is also a list, but Arena selects one value from it whose model
@@ -49,28 +36,28 @@ Every real selector written must be in the detected set. If a chosen real select
 
 ### 5. Write the file
 
-Write `~/.pi/agent/pstack/models.md`, one line per role, same line format as before, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. The values are the resolved selectors you confirmed in step 3, never a slug you invented. Shape (maintainer defaults in shorthand; resolve per step 3 and confirm or replace each role with the user before writing):
+Write `~/.pi/agent/pstack/models.md`, one line per role, same line format as before, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. The values are the resolved selectors you confirmed in step 3, never a slug you invented. Shape (defaults verified against `pi --list-models`; confirm or replace each role with the user in step 3 before writing):
 
 ```
 # pstack model configuration. One line per role. Delete a line to fall back to the skill default.
-feature, refactoring: glm-5.3-flash
-bug-fix: codex-sol-extra-high-FAST
-perf-issue: codex-sol-extra-high-FAST
-hillclimb: codex-sol-extra-high-FAST
-judgment and prose: codex-sol-extra-high
-hardest tasks: codex-sol-extra-high
-how explorer: glm-5.3-flash
-how explainer: codex-sol-extra-high
-how critics: go-flash-vision-max, codex-sol-extra-high-FAST, glm-5.3-flash, codex-sol-high
-why investigators: glm-5.3-flash
-why synthesizer: codex-sol-extra-high
-reflect tooling: codex-sol-extra-high-FAST
-reflect judgment, divergent, synthesizer: codex-sol-extra-high
-arena runners: go-flash-vision-max, codex-sol-extra-high-FAST, glm-5.3-flash, codex-sol-high
-arena cross-judge pool: go-flash-vision-max, codex-sol-extra-high-FAST, glm-5.3-flash, codex-sol-high
-swarm workers: glm-5.3-flash
-architect runners: go-flash-vision-max, codex-sol-extra-high-FAST, glm-5.3-flash, codex-sol-high
-interrogate reviewers: go-flash-vision-max, codex-sol-extra-high-FAST, glm-5.3-flash, codex-sol-high
+feature, refactoring: opencode-go/glm-5.3-flash
+bug-fix: openai-codex/gpt-5.6-sol:xhigh
+perf-issue: openai-codex/gpt-5.6-sol:xhigh
+hillclimb: openai-codex/gpt-5.6-sol:xhigh
+judgment and prose: openai-codex/gpt-5.6-sol:xhigh
+hardest tasks: openai-codex/gpt-5.6-sol:xhigh
+how explorer: opencode-go/glm-5.3-flash
+how explainer: openai-codex/gpt-5.6-sol:xhigh
+how critics: opencode-go/deepseek-v4-flash-vision-exp:max, openai-codex/gpt-5.6-sol:xhigh, opencode-go/glm-5.3-flash, openai-codex/gpt-5.6-sol:high
+why investigators: opencode-go/glm-5.3-flash
+why synthesizer: openai-codex/gpt-5.6-sol:xhigh
+reflect tooling: openai-codex/gpt-5.6-sol:xhigh
+reflect judgment, divergent, synthesizer: openai-codex/gpt-5.6-sol:xhigh
+arena runners: opencode-go/deepseek-v4-flash-vision-exp:max, openai-codex/gpt-5.6-sol:xhigh, opencode-go/glm-5.3-flash, openai-codex/gpt-5.6-sol:high
+arena cross-judge pool: opencode-go/deepseek-v4-flash-vision-exp:max, openai-codex/gpt-5.6-sol:xhigh, opencode-go/glm-5.3-flash, openai-codex/gpt-5.6-sol:high
+swarm workers: opencode-go/glm-5.3-flash
+architect runners: opencode-go/deepseek-v4-flash-vision-exp:max, openai-codex/gpt-5.6-sol:xhigh, opencode-go/glm-5.3-flash, openai-codex/gpt-5.6-sol:high
+interrogate reviewers: opencode-go/deepseek-v4-flash-vision-exp:max, openai-codex/gpt-5.6-sol:xhigh, opencode-go/glm-5.3-flash, openai-codex/gpt-5.6-sol:high
 ```
 
 ### 6. Enforce delegation guardrails (structural, not prose)

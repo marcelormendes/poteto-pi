@@ -23,11 +23,12 @@ const FORBIDDEN = [
   "agent-transcripts",
 ];
 
-// opencode-go/* are real PI selectors (verified via pi --list-models); a bare
-// gpt-5.6-sol outside that provider is a stale Cursor slug. The AskQuestion
-// negation documents a PI limitation on purpose.
+// opencode-go/* and openai-codex/* are real PI selectors (verified via
+// pi --list-models); a bare gpt-5.6-sol outside those providers is a stale
+// Cursor slug. The AskQuestion negation documents a PI limitation on purpose.
 const extraChecks = (source: string, path: string, offenders: string[]): void => {
-  if (source.replaceAll("opencode-go/gpt-5.6-sol", "").includes("gpt-5.6-sol")) {
+  const scrubbed = source.replaceAll("opencode-go/gpt-5.6-sol", "").replaceAll("openai-codex/gpt-5.6-sol", "");
+  if (scrubbed.includes("gpt-5.6-sol")) {
     offenders.push(`${path}: gpt-5.6-sol`);
   }
   for (const line of source.split("\n")) {

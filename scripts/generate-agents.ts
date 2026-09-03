@@ -14,8 +14,8 @@ interface Role {
 }
 
 const FAST = "opencode-go/glm-5.3-flash";
-const JUDGE = "opencode-go/gpt-5.6-luna";
-const SECOND = "opencode-go/gpt-5.6-sol";
+const JUDGE = "openai-codex/gpt-5.6-sol";
+const SECOND = "openai-codex/gpt-5.6-sol";
 const VISION = "opencode-go/deepseek-v4-flash-vision-exp";
 const READONLY = ["read", "grep", "find", "ls"];
 

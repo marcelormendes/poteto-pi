@@ -1,7 +1,7 @@
 ---
 name: pstack-hardest
 description: "Pstack hardest role: cross-cutting design and subtle algorithms"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 ---
 

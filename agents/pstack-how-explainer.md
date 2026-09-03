@@ -1,7 +1,7 @@
 ---
 name: pstack-how-explainer
 description: "Pstack how-explainer role: synthesize explorer evidence"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 tools: [read, grep, find, ls]
 ---

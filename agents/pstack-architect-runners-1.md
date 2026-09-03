@@ -1,7 +1,7 @@
 ---
 name: pstack-architect-runners-1
 description: "Pstack architect-runners seat 1"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 tools: [read, grep, find, ls]
 ---

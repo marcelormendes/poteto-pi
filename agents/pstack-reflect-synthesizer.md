@@ -1,7 +1,7 @@
 ---
 name: pstack-reflect-synthesizer
 description: "Pstack reflect-synthesizer role: durable lesson synthesis"
-model: opencode-go/gpt-5.6-luna
+model: openai-codex/gpt-5.6-sol
 thinking: high
 ---
 
