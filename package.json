@@ -1,0 +1,56 @@
+{
+  "name": "poteto-pi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Lauren Tan's pstack methodology as a PI.dev package: skills, playbooks, local subagent roles, and a routing extension",
+  "license": "MIT",
+  "pi": {
+    "extensions": [
+      "./extension/pstack.ts",
+      "./node_modules/pi-subagents/index.ts",
+      "./node_modules/pi-mcp-adapter/index.ts"
+    ],
+    "skills": [
+      "./skills",
+      "./node_modules/pi-subagents/skills",
+      "./node_modules/pi-mcp-adapter/skills"
+    ],
+    "prompts": ["./node_modules/pi-subagents/prompts"],
+    "subagents": { "agents": ["./agents"] }
+  },
+  "files": [
+    "extension/",
+    "skills/",
+    "agents/",
+    "scripts/",
+    "README.md",
+    "LICENSE",
+    "PI-DELTA.md"
+  ],
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "pi-subagents": "^0.64.0",
+    "pi-mcp-adapter": "^2.32.1"
+  },
+  "bundledDependencies": [
+    "pi-subagents",
+    "pi-mcp-adapter"
+  ],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-agent-core": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "0.84.4",
+    "@types/bun": "latest",
+    "typescript": "latest",
+    "typebox": "1.3.7"
+  }
+}
