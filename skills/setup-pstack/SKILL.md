@@ -30,11 +30,21 @@ the default model for every ownership block in a swarm run unless a race
 or comparison assigns another model per arm. Do not skip roles: an
 unconfirmed role keeps no value and falls back to the skill default.
 
-### 4. Validate
+### 4. Smoke-test each distinct model
+
+A selector listed in `pi --list-models` can still have dead credentials
+(expired OAuth is silent until launch). For each distinct model in the
+confirmed table, launch one trivial read-only subagent
+(`pstack-how-explorer`, task: reply with exactly `smoke-ok`, explicit
+model pin). Every smoke run must complete. A dead credential fails setup
+right here naming the exact provider: fix auth (`pi auth`) before any
+file is written. This is cheaper than debugging fifteen dead roles later.
+
+### 5. Validate
 
 Every real selector written must be in the detected set. If a chosen real selector is not available, stop and ask again. A file pointing at a model the user cannot use breaks every pass that reads it.
 
-### 5. Write the file
+### 6. Write the file
 
 Write `~/.pi/agent/pstack/models.md`, one line per role, same line format as before, using the same labels poteto-mode uses. Overwrite the whole file so re-runs stay idempotent. The values are the resolved selectors you confirmed in step 3, never a slug you invented. Shape (defaults verified against `pi --list-models`; confirm or replace each role with the user in step 3 before writing):
 
@@ -60,7 +70,7 @@ architect runners: opencode-go/deepseek-v4-flash-vision-exp:max, openai-codex/gp
 interrogate reviewers: opencode-go/deepseek-v4-flash-vision-exp:max, openai-codex/gpt-5.6-sol:xhigh, opencode-go/glm-5.3-flash, openai-codex/gpt-5.6-sol:high
 ```
 
-### 6. Enforce delegation guardrails (structural, not prose)
+### 7. Enforce delegation guardrails (structural, not prose)
 
 Lauren's roles run as local subagents. These settings make the guardrails
 real instead of advisory. Merge, never overwrite: read each file first and
@@ -79,7 +89,7 @@ writing (settings edits are hard to review after the fact).
 - Require `pi-subagents` installed. Refuse to finish setup when it is
   missing: role delegation without it silently degrades to prose.
 
-### 7. Install companion utilities when missing
+### 8. Install companion utilities when missing
 
 These ship separately so they never double-register against the user's own
 copies. Install each missing one pinned (never `latest`, so every
@@ -92,12 +102,12 @@ force-install over an objection.
 into this package: the `loop` skill, the `pstack_memory` tool, and the
 `/pstack-status` companions line. No third-party package needed.)
 
-### 8. Confirm
+### 9. Confirm
 
 Tell the user the file was written and that it applies to new sessions. Re-running this skill updates it. Then run `/pstack-status`: it must report clean. A drift line names the exact skipped guardrail; fix it before doing pstack work.
 
 Then check that delegation resolves. Run `subagent({ action: "list" })` (the pi-subagents list action) and confirm every role the skills launch shows up: `pstack-feature`, `pstack-bug-fix`, `pstack-refactoring`, `pstack-perf-issue`, `pstack-hillclimb`, `pstack-judgment-prose`, `pstack-hardest`, `pstack-how-explorer`, `pstack-how-explainer`, `pstack-why-investigator`, `pstack-why-synthesizer`, `pstack-reflect-tooling`, `pstack-reflect-judgment`, `pstack-reflect-divergent`, `pstack-reflect-synthesizer`, `pstack-swarm-worker`, `pstack-how-critics-1..4`, `pstack-arena-runners-1..4`, `pstack-arena-cross-judges-1..4`, `pstack-architect-runners-1..4`, `pstack-interrogate-reviewers-1..4`. A role agent the list does not show means delegation for that role fails. If any role agent is missing, or `/pstack-status` still reports drift, fail the setup: name the exact missing piece (the agent name, or the drift line naming the skipped guardrail) and the fix, and stop. No pstack work starts until both checks pass.
 
-### 9. Offer a verification skill (optional)
+### 10. Offer a verification skill (optional)
 
 Check whether the project has a way to drive the real app for proof (a `verify-*` skill, or an existing harness). If not, offer once: "want a project-local verification skill, so agents can drive the app the way a user does and prove changes work? I can generate one with /skill:create-verification-skill." On yes, invoke `/skill:create-verification-skill`. On no, move on without pushing.
