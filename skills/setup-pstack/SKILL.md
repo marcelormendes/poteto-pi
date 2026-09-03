@@ -82,14 +82,21 @@ writing (settings edits are hard to review after the fact).
 ### 7. Install companion utilities when missing
 
 These ship separately so they never double-register against the user's own
-copies. For each of `@narumitw/pi-goal`, `@trevonistrevon/pi-loop`,
-`pi-web-access`, `pi-memory`, `pi-updater`, `@99percentpeople/pi-codex-api`:
-skip when already installed, otherwise ask once and run
-`pi install npm:<name>`. Never force-install over an objection.
+copies. Install each missing one pinned (never `latest`, so every
+machine resolves identically):
+`pi-subagents@0.64.0`, `pi-mcp-adapter@2.32.1`, `@narumitw/pi-goal@0.54.4`,
+`pi-web-access@0.27.0`, via `pi install npm:<name>@<version>`.
+Skip what is already installed; ask once before each install and never
+force-install over an objection.
+(Bounded loops, durable memory, and companion update checks are built
+into this package: the `loop` skill, the `pstack_memory` tool, and the
+`/pstack-status` companions line. No third-party package needed.)
 
 ### 8. Confirm
 
 Tell the user the file was written and that it applies to new sessions. Re-running this skill updates it. Then run `/pstack-status`: it must report clean. A drift line names the exact skipped guardrail; fix it before doing pstack work.
+
+Then check that delegation resolves. Run `subagent({ action: "list" })` (the pi-subagents list action) and confirm every role the skills launch shows up: `pstack-feature`, `pstack-bug-fix`, `pstack-refactoring`, `pstack-perf-issue`, `pstack-hillclimb`, `pstack-judgment-prose`, `pstack-hardest`, `pstack-how-explorer`, `pstack-how-explainer`, `pstack-why-investigator`, `pstack-why-synthesizer`, `pstack-reflect-tooling`, `pstack-reflect-judgment`, `pstack-reflect-divergent`, `pstack-reflect-synthesizer`, `pstack-swarm-worker`, `pstack-how-critics-1..4`, `pstack-arena-runners-1..4`, `pstack-arena-cross-judges-1..4`, `pstack-architect-runners-1..4`, `pstack-interrogate-reviewers-1..4`. A role agent the list does not show means delegation for that role fails. If any role agent is missing, or `/pstack-status` still reports drift, fail the setup: name the exact missing piece (the agent name, or the drift line naming the skipped guardrail) and the fix, and stop. No pstack work starts until both checks pass.
 
 ### 9. Offer a verification skill (optional)
 

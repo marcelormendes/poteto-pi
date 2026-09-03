@@ -28,7 +28,7 @@ Skip Phase A only when the work is genuinely greenfield with no surrounding syst
 
 ## Phase B: Sketch
 
-Run the **arena** skill with the design-sketch task and the Phase A grounding artifacts. Pass `references/runner-prompt.md` as each runner's prompt. Each candidate produces a design package shaped per `references/rationale-template.md`: the caller's usage written first, then the type sketch, function signatures, module map, and prose rationale derived from it.
+Run the **arena** skill with the design-sketch task and the Phase A grounding artifacts. Pass `references/runner-prompt.md` as each runner's prompt. The arena launches each runner as a `subagent` run naming the matching `pstack-architect-runners-<n>` role agent, with its model pinned from the architect-runners list in `~/.pi/agent/pstack/models.md` (see the arena skill for the fan-out mechanics and its sequential fallback); runners are read-only sketch passes, so no worktree or gate is needed for them. Each candidate produces a design package shaped per `references/rationale-template.md`: the caller's usage written first, then the type sketch, function signatures, module map, and prose rationale derived from it.
 
 Use your configured architect runners (see the architect-runners role list in `~/.pi/agent/pstack/models.md`, managed by `setup-pstack`; defaults: the strongest judgment model, the second-family model, the fast mechanical model, and a second strong-judgment model — setup resolves the concrete models, never invent PI model slugs).
 

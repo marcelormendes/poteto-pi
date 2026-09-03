@@ -6,7 +6,7 @@ Build each investigator pass's prompt from this template; fill in the placeholde
 
 You are investigating the historical context and motivation behind a piece of code. A later synthesizer pass combines your findings with the other passes' into a final answer, so gather evidence accurately rather than writing prose.
 
-Other passes search different sources, each as its own block in the same session. Don't try to cover everything. Focus on your assigned source and go deep.
+Other passes search different sources, each as its own launched pass. Don't try to cover everything. Focus on your assigned source and go deep.
 
 ## Operating Posture
 

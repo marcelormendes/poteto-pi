@@ -4,10 +4,15 @@ import { join } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerTodoTool } from "./todo";
 import { registerTranscriptTool } from "./transcripts";
+import { registerMemoryTool } from "./memory";
+import { COMPANION_PINS, checkCompanionUpdates } from "./update-check";
 import { verifyGuardrails } from "./setup-settings";
 
 const MODE_ENTRY = "dev.poteto-pi.mode";
 const ROUTER_ENTRY = "dev.poteto-pi.router";
+
+const REMINDER =
+  "Pstack mode is on. Route the goal to the narrowest specialist skill, then invoke it via /skill:name. Panels run as numbered subagent passes; verify against the real surface.";
 
 const FULL_ROUTER = `# Pstack routing contract (PI edition)
 
@@ -50,15 +55,12 @@ Manual slash commands are overrides, not a prerequisite.
 - critics and judges: a different family from the author whenever available
 `;
 
-const REMINDER =
-  "Pstack mode is on. Route the goal to the narrowest specialist skill; " +
-  "run panel passes sequentially; verify against the real surface.";
-
 export default function pstackPi(pi: ExtensionAPI): void {
   let enabled = true;
   let routerSent = false;
   registerTodoTool(pi);
   registerTranscriptTool(pi);
+  registerMemoryTool(pi);
 
   pi.registerCommand("pstack-mode", {
     description: "Toggle pstack automatic routing for this session (on|off|status)",
@@ -89,12 +91,18 @@ export default function pstackPi(pi: ExtensionAPI): void {
         piSettings: await readJson(join(agentDir, "settings.json")),
         extensionConfig: await readJson(join(agentDir, "extensions", "subagent", "config.json")),
       });
+      const updates = await checkCompanionUpdates(undefined, COMPANION_PINS);
+      const updateLine =
+        updates.stale.length === 0
+          ? `Companions: up to date${updates.checkedAt ? "" : " (offline check)"}`
+          : `Updates available: ${updates.stale.join(", ")} — pi install <name>@latest`;
       const lines = [
         `Pstack status: ${!enabled ? "off" : findings.length === 0 ? "clean" : "drift detected"}`,
         `Router: ${routerSent ? "loaded" : "pending"}`,
         ...(findings.length === 0
           ? ["Guardrails: 6 adapters disabled, worktree default on, depth >= 2"]
           : findings.map((finding) => `Missing: ${finding.where} ${finding.key} (need ${finding.expected})`)),
+        updateLine,
       ];
       ctx.ui.notify(lines.join("\n"), findings.length === 0 ? "info" : "error");
     },

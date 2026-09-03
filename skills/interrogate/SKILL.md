@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Interrogate
 
-Run one reviewer pass per configured model to adversarially review code changes. Passes run sequentially in one session; the user switches the session model between passes so each pass applies a different model. Each pass gets the same prompt and rubric. The adversarial signal comes from model diversity, not assigned personas. Models differ in blind spots, priors, and reasoning patterns. Agreement across models is high-confidence signal; lone-model findings are worth reading but lower confidence.
+Run one reviewer pass per configured model to adversarially review code changes. Passes are read-only subagent runs fanned out in one workflow: the `pstack-interrogate-reviewers-1..4` role agents (role agents live in `agents/`), one per configured model, each given the identical filled prompt and rubric. Each pass applies a different model. The adversarial signal comes from model diversity, not assigned personas. Models differ in blind spots, priors, and reasoning patterns. Agreement across models is high-confidence signal; lone-model findings are worth reading but lower confidence.
 
 The deliverable is a synthesized verdict. Do NOT auto-apply changes.
 
@@ -32,6 +32,43 @@ Before running the reviewers, state the intent explicitly. What is this code try
 Write one clear paragraph. Reviewers challenge whether the work achieves the intent well, not whether the intent itself is correct. If you're unsure about the intent, ask the user before proceeding.
 
 ## Step 3, Run Reviewer Passes
+
+**Subagent fan-out (default).** When the `subagent` tool (pi-subagents) is present, launch the reviewers with `workflowScript` `runs.all`, one run per reviewer. Each run names the matching `pstack-interrogate-reviewers-<n>` role agent, pins an explicit `model` (the seat's configured list entry), sets `context: "fresh"`, and carries the same filled template as the task. The role agents are read-only by definition; never pass `worktree` and never let a reviewer write to the repo.
+
+Use the `interrogate reviewers` list from `~/.pi/agent/pstack/models.md` when present, one pass per entry, extending or shrinking the seats below to the configured entry count; otherwise use the seat defaults (the role agents' pinned models). When the list has more entries than seats, recycle seats in order (entry 5 uses reviewer 1, and so on).
+
+| Seat | Default model role |
+|------|------------|
+| Reviewer 1 | strongest judgment model (setup default) |
+| Reviewer 2 | second-family model |
+| Reviewer 3 | strongest judgment model (setup default), medium thinking |
+| Reviewer 4 | fast mechanical model (setup default) |
+
+For each run:
+
+- `model` is the configured list entry for that pass when present; otherwise the seat's role-agent pin (setup default). Every run pins an explicit model — never a slug you invented. If a configured entry is `inherit-parent` or `auto`, use the seat's role-agent pin and record that in the verdict; those values are never broken model slugs. Do not block the review on model availability.
+- `task` is the identical filled template: read `references/reviewer-prompt.md` and fill in the template with (1) the stated intent, (2) the diff or file contents, (3) the review rubric from `references/rubric.md`, (4) the code-quality lens from `references/code-quality-review.md`. The same filled template goes to every run, so every model applies the code-quality lens.
+- Each pass produces structured findings as described in the prompt template.
+
+```js
+subagent({
+  async: true,
+  workflowScript: `
+    const template = "<same filled reviewer prompt for every run>";
+    const results = await runs.all([
+      { key: "reviewer-1", agent: "pstack-interrogate-reviewers-1", model: "<entry 1 model>", context: "fresh", task: template },
+      { key: "reviewer-2", agent: "pstack-interrogate-reviewers-2", model: "<entry 2 model>", context: "fresh", task: template }
+    ]);
+    return results.map(r => ({ key: r.key, status: r.status, outputReference: r.outputReference }));
+  `
+})
+```
+
+Record which model each run resolved to, on the todo list (`pstack_todo` when present, else a markdown checklist).
+
+If a reviewer drops out or returns `BLOCKED`, proceed with the remaining reviewers and note the gap in the verdict. `runs.all` keeps sibling lanes running when one lane blocks or fails.
+
+**Fallback: sequential passes (used only when the `subagent` tool is absent).**
 
 Run the reviewers one at a time as numbered sequential passes in one session. Use the `interrogate reviewers` list from `~/.pi/agent/pstack/models.md` when present, one pass per entry, extending or shrinking the pass labels below to the configured entry count; otherwise use the table defaults.
 

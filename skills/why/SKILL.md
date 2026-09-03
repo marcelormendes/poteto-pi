@@ -1,6 +1,6 @@
 ---
 name: why
-description: "Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, or data-backed thresholds. Discovers available MCPs and queries each evidence category (source control, issue tracker, long-form docs, real-time chat, infrastructure observability, error tracking, product analytics warehouse) in sequential passes, then returns a cited read on decisions and tradeoffs. Use how for runtime behavior."
+description: "Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, or data-backed thresholds. Discovers available MCPs and queries each evidence category (source control, issue tracker, long-form docs, real-time chat, infrastructure observability, error tracking, product analytics warehouse) one pass per category, then returns a cited read on decisions and tradeoffs. Use how for runtime behavior."
 disable-model-invocation: true
 ---
 
@@ -12,7 +12,7 @@ Companion to the `how` skill. `how` answers what the code does and how it works.
 
 ## How this skill works
 
-Historical context spreads across seven evidence categories: source control history, issue or ticket tracking, long-form documents, real-time team chat, infrastructure observability, error or exception tracking, and product analytics warehouses. You cannot predict from the question alone which one holds the answer, so the skill enumerates available MCPs at run time, maps each to a category, runs one pass per available category sequentially, then synthesizes with explicit confidence calibration. Null results from searched categories are first-class evidence about how the decision was made; report them alongside positive findings. The default is coverage, not minimalism.
+Historical context spreads across seven evidence categories: source control history, issue or ticket tracking, long-form documents, real-time team chat, infrastructure observability, error or exception tracking, and product analytics warehouses. You cannot predict from the question alone which one holds the answer, so the skill enumerates available MCPs at run time, maps each to a category, runs one pass per available category — as a subagent fan-out when the `subagent` tool (pi-subagents) is present, as sequential passes otherwise — then synthesizes with explicit confidence calibration. Null results from searched categories are first-class evidence about how the decision was made; report them alongside positive findings. The default is coverage, not minimalism.
 
 ## Operating Posture
 
@@ -114,7 +114,9 @@ Source control is always available through git and `gh`. For the other six, clas
 
 Aim for a complete **coverage map**, not a minimal one. A null result from an issue tracker is evidence the decision was not ticketed, a useful fact in itself. Document the null, don't skip the search.
 
-Run the investigator passes sequentially, one per matching category, numbered, in this session. Each pass is a full block of work run to completion before the next starts (Pass 1, Pass 2, ...). One pass per category lets each specialize in one tool's query vocabulary and result shape. Don't let one pass cover multiple MCPs.
+**Subagent fan-out (default).** When the `subagent` tool (pi-subagents) is present, launch one investigator per matching category with `workflowScript` `runs.all`, each run naming the `pstack-why-investigator` role agent, pinning the investigator role model from `~/.pi/agent/pstack/models.md` (managed by `setup-pstack`; fall back to the role's default, `fast mechanical model (setup default)` — never invent a model slug), and running non-writing: the run may call any tool, including the MCPs, but must not create, edit, commit, or otherwise mutate anything. Don't restrict the run's tool access — MCP-backed passes need it; keep the posture uniform across categories. One pass per category lets each specialize in one tool's query vocabulary and result shape; don't let one run cover multiple MCPs. Each `task` is the base prompt from `references/investigator-prompt.md` plus the category playbook, code anchor, and original question; keep every brief standalone, with the member-overlap rule: a category may record cross-source leads but must not chase them. Results come back in launch order, each with its PASS / ISSUES / BLOCKED status. A BLOCKED pass is recorded as a skipped source in the final "Sources Consulted," not as an empty result. Record which model ran which pass.
+
+**Fallback: sequential passes (used only when the `subagent` tool is absent).** Run the investigator passes sequentially, one per matching category, numbered, in this session. Each pass is a full block of work run to completion before the next starts (Pass 1, Pass 2, ...). One pass per category lets each specialize in one tool's query vocabulary and result shape. Don't let one pass cover multiple MCPs.
 
 Model and posture (each pass):
 - Model: the investigator role model from `~/.pi/agent/pstack/models.md` (managed by `setup-pstack`; default `fast mechanical model (setup default)`). The user switches the session model (`--model provider/id`, or Ctrl+P) when a pass should run under a different model; record which model ran which pass.
@@ -127,7 +129,7 @@ Each pass gets:
 4. The code anchor from Step 2 (file paths, symbols, commit hashes, PR numbers, ticket IDs)
 5. The user's original question
 
-### Pass roster. One sequential pass per available evidence category
+### Pass roster. One pass per available evidence category
 
 Run one pass per category that has a matching MCP. Each owns exactly one tool or MCP.
 
@@ -160,7 +162,9 @@ If your scope assessment suggests a single-commit trivial target where the PR de
 
 ## Step 4. Synthesize
 
-Run one synthesizer pass in this session:
+**Subagent run (default).** When the `subagent` tool (pi-subagents) is present, launch the synthesizer as one `runs.run` naming the `pstack-why-synthesizer` role agent, pinned to the synthesizer role model from `~/.pi/agent/pstack/models.md` (default: `strongest judgment model (setup default)`). Record the model. It runs non-writing: its quality check spot-verifies citations, which can require MCP access, so the run may read the codebase and call MCP tools but must not create, edit, commit, or otherwise mutate anything — don't restrict its tool access, that defeats verification.
+
+**Fallback (used only when the `subagent` tool is absent).** Run one synthesizer pass in this session:
 
 - Model: the synthesizer role model from `~/.pi/agent/pstack/models.md` (managed by `setup-pstack`; default `strongest judgment model (setup default)`). Record the model.
 - Non-writing: the synthesizer's quality check spot-verifies citations, which can require MCP access. The pass may read the codebase and call MCP tools, but must not create, edit, commit, or otherwise mutate anything. Don't restrict the pass's tool access — that defeats verification.

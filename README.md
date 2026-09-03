@@ -13,31 +13,17 @@ adaptation layer (sequential fallbacks, role agents, guardrails, setup).
 Upstream: https://github.com/cursor/plugins/tree/main/pstack (MIT).
 If pstack makes you faster, the credit is hers.
 
-## Companion bundle
+## Companion packages
 
-Bundled with this package (pinned, version-sensitive):
-
-| package | role |
-|---|---|
-| `pi-subagents` | local delegation (`subagent` tool, fleet, missions, `worktree: true` runs) |
-| `pi-mcp-adapter` | MCP servers as tools (powers `why` investigators) |
-
-Installed by `/skill:setup-pstack` when missing (version-tolerant utilities,
-kept separate so they never double-register against your own copies):
+This package ships only its own resources. Setup installs these pinned
+companions separately so copies never double-register:
 
 | package | role |
 |---|---|
-| `@narumitw/pi-goal` | `/goal` autonomous single-objective completion |
-| `@trevonistrevon/pi-loop` | scheduled re-wakes, durable workflows, background monitoring |
-| `pi-web-access` | web fetch/search tools |
-| `pi-memory` | semantic memory across logs and scratchpad (powers `recall`/`reflect`) |
-| `pi-updater` | keeps pi and extensions updated |
-| `@99percentpeople/pi-codex-api` | Codex subscription models inside PI |
-
-Fresh PI, install this package, run `/skill:setup-pstack`, generate a
-verification skill for the project — done. Everything runs local; this
-port contains zero cloud constructs by policy.
-
+| `pi-subagents@0.64.0` | local delegation (required) |
+| `pi-mcp-adapter@2.32.1` | MCP servers as tools (required) |
+| `@narumitw/pi-goal@0.54.4` | `/goal` runs |
+| `pi-web-access@0.27.0` | web fetch/search tools |
 
 ```bash
 pi install -l ./poteto-pi

@@ -29,7 +29,7 @@ Identify the scope. If ambiguous, state your best-guess interpretation before ex
 **Assess complexity to decide the approach:**
 
 - **Simple** (a single module, a small utility, a narrow question like "how does function X work"): skip explorer passes; the explainer explores and explains in a single pass. Go to Step 2b.
-- **Complex** (a subsystem spanning multiple files/services, a cross-cutting feature, a full architectural overview): run sequential explorer passes first, then hand off to the explainer. Go to Step 2a.
+- **Complex** (a subsystem spanning multiple files/services, a cross-cutting feature, a full architectural overview): run the explorer fan-out first, then hand off to the explainer. Go to Step 2a.
 
 When in doubt, lean simple. You can always run explorer passes if the explainer hits a wall.
 
@@ -43,7 +43,9 @@ Decompose the question into 2-4 exploration angles, each a distinct slice of the
 
 The right decomposition depends on the question. Use your judgment. Narrow questions: 2 passes is fine. Broad subsystems: up to 4.
 
-Run the explorer passes sequentially, one pass per angle, in this session. Each pass is a numbered block of work run to completion before the next starts (Pass 1, Pass 2, ...). The briefs stay identical across passes; only the exploration angle differs.
+**Subagent fan-out (default).** When the `subagent` tool (pi-subagents) is present, launch one explorer per angle with `workflowScript` `runs.all`. Each run names the `pstack-how-explorer` role agent (role agents live in `agents/`), pins the explorer role model from `~/.pi/agent/pstack/models.md` (managed by `setup-pstack`; fall back to the role's default, the fast mechanical model — never invent a model slug), and reads only. Build each run's `task` from the same base prompt in `references/explorer-prompt.md` plus a specific exploration angle naming its slice; the briefs stay identical across passes, and every brief is standalone — no explorer references another's findings. Results come back in launch order, each with its PASS / ISSUES / BLOCKED status. Record which model ran which pass.
+
+**Fallback: sequential passes (used only when the `subagent` tool is absent).** Run the explorer passes sequentially, one pass per angle, in this session. Each pass is a numbered block of work run to completion before the next starts (Pass 1, Pass 2, ...). The briefs stay identical across passes; only the exploration angle differs.
 
 Each pass gets the same base prompt from `references/explorer-prompt.md` plus a specific exploration angle naming its slice. Before the passes, switch the session model to the explorer role model when the active model differs from the role (see `~/.pi/agent/pstack/models.md`, managed by `setup-pstack`; default role model: the fast mechanical model). Record which model ran which pass.
 
@@ -60,13 +62,17 @@ Then proceed to Step 3.
 
 ### Step 2b. Direct Explain (simple questions)
 
-Run one explainer pass that explores and explains in one go. Read `references/explainer-prompt.md` for the communication style and output format. Do your own exploration (find + grep + read), then write the explanation directly. Same structure, just no explorer findings as input.
+**Subagent run (default).** When the `subagent` tool (pi-subagents) is present, launch the explainer as one `runs.run`: name the `pstack-how-explainer` role agent, pin the explainer role model from `~/.pi/agent/pstack/models.md` (default: the strongest judgment model), read-only. Its `task` is the prompt from `references/explainer-prompt.md`; it explores (find + grep + read) and writes the explanation in one go. Same structure, just no explorer findings as input. Record the model. Proceed to Step 4.
+
+**Fallback (used only when the `subagent` tool is absent).** Run one explainer pass that explores and explains in one go. Read `references/explainer-prompt.md` for the communication style and output format. Do your own exploration (find + grep + read), then write the explanation directly. Same structure, just no explorer findings as input.
 
 Run it on the explainer role model (default: the strongest judgment model; `~/.pi/agent/pstack/models.md`) and record the model. Proceed to Step 4.
 
 ### Step 3. Synthesize (complex questions only)
 
-Once all explorer passes return, run one synthesize pass that merges their findings into one coherent explanation. Collect every pass's findings, read `references/explainer-prompt.md` for the full prompt template, reconcile overlapping findings, resolve contradictions, and weave the slices into a unified picture. Run it on the explainer role model and record the model.
+**Subagent run (default).** Once all explorer passes return, launch the synthesize pass as one `runs.run` on the `pstack-how-explainer` role agent, pinned to the explainer role model from `~/.pi/agent/pstack/models.md`, read-only. Its `task` collects every pass's findings and the template in `references/explainer-prompt.md`; it reconciles overlapping findings, resolves contradictions, and weaves the slices into one unified picture. Record the model.
+
+**Fallback (used only when the `subagent` tool is absent).** Once all explorer passes return, run one synthesize pass that merges their findings into one coherent explanation. Collect every pass's findings, read `references/explainer-prompt.md` for the full prompt template, reconcile overlapping findings, resolve contradictions, and weave the slices into a unified picture. Run it on the explainer role model and record the model.
 
 ### Step 4. Present
 
@@ -100,7 +106,9 @@ Run the full explain flow above (Steps 1-4). You must understand the architectur
 
 After the explanation is complete, run one critic pass per model in your configured how-critics list (see the how-critics role list in `~/.pi/agent/pstack/models.md`; defaults: the strongest judgment model, the second-family model, the fast mechanical model, and a second strong-judgment model — setup resolves the concrete models, never invent PI model slugs). These are minimum reasoning levels. The lead should escalate any model when the architecture warrants deeper analysis.
 
-Run the critic passes sequentially, numbered, one per model, each as its own block in this session. Between passes the user switches the session model (`--model provider/id`, or Ctrl+P) so each pass reasons under a different model; record which model ran which pass. Each critic pass reads the code but edits nothing.
+**Subagent fan-out (default).** When the `subagent` tool (pi-subagents) is present, launch one critic per seat with `workflowScript` `runs.all`: each run names the matching `pstack-how-critics-<n>` role agent, pins that seat's model from the how-critics list in `~/.pi/agent/pstack/models.md` (setup resolves the concrete models; never invent PI model slugs), and reads only. Contrast rule: the how-critics list spans model families, so pick seats whose family differs from the explainer's authoring family when the list allows — critics must not be the same family as the explanation author. Record which model ran which pass.
+
+**Fallback (used only when the `subagent` tool is absent).** Run the critic passes sequentially, numbered, one per model, each as its own block in this session. Between passes the user switches the session model (`--model provider/id`, or Ctrl+P) so each pass reasons under a different model; record which model ran which pass. Each critic pass reads the code but edits nothing.
 
 Read `references/critic-prompt.md` for the prompt template. Each critic pass gets:
 1. The explanation from Step 1 (so it doesn't re-explore)

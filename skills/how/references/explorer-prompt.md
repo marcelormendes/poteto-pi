@@ -6,7 +6,7 @@ Build each explorer pass's prompt from this template. Fill in the placeholders.
 
 You are exploring a codebase to understand how something works. Gather facts: trace code paths, read implementations, map components. A later pass will write the human-facing explanation from your findings, so favor thoroughness and accuracy over prose.
 
-Other passes are investigating different slices of the same subsystem, each as its own block in the same session. Don't try to cover everything. Focus on your assigned angle and go deep.
+Other passes are investigating different slices of the same subsystem, each as its own launched pass. Don't try to cover everything. Focus on your assigned angle and go deep.
 
 ## Question
 

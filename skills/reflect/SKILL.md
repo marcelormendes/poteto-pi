@@ -33,21 +33,42 @@ Do not glob across other projects' session dirs. That crosses workspace boundari
 
 For each candidate, read the first JSONL entry and check that the entry's message text contains the conversation's opening user prompt. Take the matching path. If no path resolves, write a tight digest of the session and pass that instead.
 
-### 2. Run three reviewers as sequential passes
+### 2. Run three reviewers as one subagent fan-out
 
-One session, three numbered passes, one per lens. Each pass reads the session and applies its lens; the user switches the session model before a pass to match its role (`--model provider/id` on launch, or Ctrl+P to cycle). Record which model each pass ran under. The prompts forbid file writes; the parent applies edits.
+**Subagent fan-out (default).** When the `subagent` tool (pi-subagents) is present, launch the three lens reviewers with `workflowScript` `runs.all`, one run per lens. Each run names its role agent — `pstack-reflect-tooling`, `pstack-reflect-judgment`, `pstack-reflect-divergent` (role agents live in `agents/`) — pins an explicit `model`, sets `context: "fresh"`, and carries the lens template as the task. The role agents are non-writing: their prompts forbid file writes; the parent applies edits. Never pass `worktree` and never let a lens edit files.
 
-| Lens | `model` | Prompt template |
+| Lens | Role agent | Prompt template |
 |---|---|---|
-| Judgment | your configured reflect-judgment model (default: strongest judgment model (setup default)) | `references/judgment-reviewer.md` |
-| Tooling | your configured reflect-tooling model (default: second-family model) | `references/tooling-reviewer.md` |
-| Divergent | your configured reflect-judgment model (default: strongest judgment model (setup default)) | `references/divergent-reviewer.md` |
+| Judgment | `pstack-reflect-judgment` | `references/judgment-reviewer.md` |
+| Tooling | `pstack-reflect-tooling` | `references/tooling-reviewer.md` |
+| Divergent | `pstack-reflect-divergent` | `references/divergent-reviewer.md` |
 
-Pass each template verbatim, substituting the session path or digest where marked. Reviewers return findings in the pass output. If a configured model is `inherit-parent` or `auto`, run that pass on the current session model and note it. If the user keeps one model for all three passes, note it: lens diversity is weaker with one model.
+Resolve each run's `model` from `~/.pi/agent/pstack/models.md` (written by setup-pstack): the `reflect tooling` line for the tooling lens, the `reflect judgment, divergent, synthesizer` line for the judgment, divergent, and synthesizer runs. When a line is absent, use that role agent's pinned model (setup default). Every run pins an explicit model — never a slug you invented. If a configured value is `inherit-parent` or `auto`, use the role agent's pin and note it.
 
-### 3. Synthesize
+Pass each template verbatim as the task, substituting the session path or digest where marked. Lens runs are read-only: they may call MCP tools and read the codebase, never write.
 
-One pass after the reviewers, using your configured reflect-judgment model (default: strongest judgment model (setup default)). The synthesizer's quality check includes spot-verifying citations, which can require context lookups. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.
+```js
+subagent({
+  async: true,
+  workflowScript: `
+    const sessionPath = "<absolute session path or digest>";
+    const results = await runs.all([
+      { key: "judgment", agent: "pstack-reflect-judgment", model: "<resolved judgment model>", context: "fresh", task: "<references/judgment-reviewer.md with the session path substituted>" },
+      { key: "tooling", agent: "pstack-reflect-tooling", model: "<resolved tooling model>", context: "fresh", task: "<references/tooling-reviewer.md with the session path substituted>" },
+      { key: "divergent", agent: "pstack-reflect-divergent", model: "<resolved divergent model>", context: "fresh", task: "<references/divergent-reviewer.md with the session path substituted>" }
+    ]);
+    return results.map(r => ({ key: r.key, status: r.status, outputReference: r.outputReference }));
+  `
+})
+```
+
+Record which model each run resolved to, and whether the session went by path or digest. If a reviewer drops out or returns `BLOCKED`, proceed with the remaining lenses and note the gap when synthesizing; `runs.all` keeps sibling lanes running when one lane blocks or fails. If the user configured one model for all three lenses, note it: lens diversity is weaker with one model.
+
+### 3. Synthesize (parent)
+
+**Parent synthesis (default).** The parent performs the synthesis in its own session after the three lens reviewers return — do not launch a fourth subagent for it. Apply `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The quality check includes spot-verifying citations, which can require read-only context lookups (MCP or codebase). The synthesis returns a structured Accepted / Rejected / Backlog list; the parent owns the criteria judgments and the presentation to the user.
+
+This pass is judgment work. Use your configured synthesize model (the `reflect judgment, divergent, synthesizer` line from `~/.pi/agent/pstack/models.md`; default: strongest judgment model (setup default)). If the session model differs from the configured synthesizer model, switch before synthesizing (`--model provider/id` on launch, or Ctrl+P to cycle), or note the mismatch after the synthesis.
 
 ### 4. Structural enforcement check
 
@@ -76,3 +97,21 @@ Short list, no preamble:
 - New skills created: `<skill path>`. One line each (rare).
 - Backlog filed to the devex tracker: `<issue title>` (`<tags>`). One line each.
 - Dropped: one line per rejected finding + reason from the synthesizer.
+
+**Fallback: sequential passes (used only when the `subagent` tool is absent).**
+
+### 2. Run three reviewers as sequential passes
+
+One session, three numbered passes, one per lens. Each pass reads the session and applies its lens; the user switches the session model before a pass to match its role (`--model provider/id` on launch, or Ctrl+P to cycle). Record which model each pass ran under. The prompts forbid file writes; the parent applies edits.
+
+| Lens | `model` | Prompt template |
+|---|---|---|
+| Judgment | your configured reflect-judgment model (default: strongest judgment model (setup default)) | `references/judgment-reviewer.md` |
+| Tooling | your configured reflect-tooling model (default: second-family model) | `references/tooling-reviewer.md` |
+| Divergent | your configured reflect-judgment model (default: strongest judgment model (setup default)) | `references/divergent-reviewer.md` |
+
+Pass each template verbatim, substituting the session path or digest where marked. Reviewers return findings in the pass output. If a configured model is `inherit-parent` or `auto`, run that pass on the current session model and note it. If the user keeps one model for all three passes, note it: lens diversity is weaker with one model.
+
+### 3. Synthesize
+
+One pass after the reviewers, using your configured reflect-judgment model (default: strongest judgment model (setup default)). The synthesizer's quality check includes spot-verifying citations, which can require context lookups. Use `references/synthesizer.md` verbatim, with each reviewer's full output inlined where marked. The synthesizer returns a structured Accepted / Rejected / Backlog list.

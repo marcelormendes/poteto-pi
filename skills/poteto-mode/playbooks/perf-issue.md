@@ -13,12 +13,14 @@
    - **Redundancy.** The wait hangs on one slow instance or attempt. Duplicate the work (replicas, hedged requests, speculative execution) and take the fastest result. This trades extra load for lower tail latency, so the trace has to show the wait dominates and the system has headroom; duplication without that tradeoff only adds load.
    - **Lazy evaluation.** Cost lands on results that are never used or not needed yet (eager init on the boot path, rendering offscreen items). Defer the work until first use.
    - **Scheduling.** The work must happen, but not during the interactive moment. Move it to where nobody is waiting: idle callbacks, a background warmup after boot, precompute before the user arrives, cleanup after the frame commits. Distinct from Lazy (later-when-needed): Scheduling often runs the work *earlier* than the hot moment, or in its shadow. The win is perceived latency, so measure the interactive path, not total work done.
-3. Plan the fix from the trace. If it crosses a function boundary, `architect` first. Run the implementation pass using your configured perf-issue model (default `strongest judgment model (setup default)`); review the diff before accepting. Capture a post-fix trace.
+3. Plan the fix from the trace. If it crosses a function boundary, `architect` first. Launch the implementation pass through the `subagent` tool: `{ agent: "pstack-perf-issue", model: <perf role model>, task: <the brief>, worktree: true, gate: <the trace command against the frozen harness>, timeoutMs: <budget> }`; review its diff before accepting, never accept its summary on faith. The perf role agent is a writer: isolated git worktree, post-fix trace captured before the report. Pin the role model from `~/.pi/agent/pstack/models.md` (managed by `setup-pstack`; fall back to the role's default, the strongest judgment model (setup default), never invent a model slug) and record which model ran the launch. Capture a post-fix trace.
    Apply the **sequence-verifiable-units** principle skill, verifying each attempt before trying the next.
 4. Parse and compare the artifacts (JSON to sqlite, diff). "Inconclusive" or wrong-surface is not a pass; flag it.
 5. Cite the measurement in the PR.
 6. Run **Opening a PR**.
 
 For sustained improvement against a metric rather than a one-off fix, use the Hillclimb playbook (`playbooks/hillclimb.md`).
+
+**Fallback: sequential numbered passes (used only when the `subagent` tool is absent).** Run the same briefs inline and sequentially in this session, one numbered pass per delegated step, on the configured role models, per Passes in the skill. Same scope, same PASS/ISSUES/BLOCKED envelope, same dropout tolerance.
 
 **Reply:** baseline number, post-fix number, delta, artifact path.

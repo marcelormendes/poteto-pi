@@ -1,0 +1,197 @@
+#!/usr/bin/env bash
+# pi-fleet: dispatch headless PI runs to tailnet nodes over SSH.
+# Lauren's cloud-agent pattern on user-owned machines: the parent keeps
+# context clean while remote nodes do the work, then artifacts come back.
+#
+# Conventions: remote workdir ~/.pi-fleet/<run-id>/ holds repo/, brief.md,
+# agent.log, exit-code, RESULT.md. The brief must instruct the agent to
+# write its report envelope to RESULT.md in the workdir.
+set -euo pipefail
+
+SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new)
+# Per-node key: ~/.ssh/pi_fleet_<slug> when present, else PI_FLEET_SSH_KEY.
+# The loopback test key ~/.ssh/pi_fleet_loopback is created by setup docs.
+if [[ -n "${PI_FLEET_SSH_KEY:-}" ]]; then SSH_OPTS+=(-i "$PI_FLEET_SSH_KEY"); fi
+
+# Every remote-interpolated value is charset-validated below. Without this,
+# a hostile --repo/--ref/--run value would break out of the remote
+# single-quotes and execute on the remote host.
+valid_remote_value() {
+  [[ "$1" =~ ^[A-Za-z0-9._:/@+~-]+$ ]]
+}
+require_remote_value() {
+  valid_remote_value "$2" || { echo "rejecting unsafe $1: $2" >&2; exit 2; }
+}
+valid_run_id() {
+  [[ "$1" =~ ^run-[0-9T]+$ ]]
+}
+
+REMOTE_BASE=".pi-fleet"
+
+usage() {
+  cat <<'EOF'
+Usage: pi-fleet <command> [options]
+
+  nodes [--json]                  List online tailnet nodes (name + IP)
+  preflight --node NAME           Check SSH, pi binary, and model catalog on a node
+  dispatch --node NAME --repo URL --ref REF --brief-file FILE [--timeout SECS] [--dry-run]
+                                  Start a headless run; prints a run record as JSON
+  poll --node NAME --run ID [--json]
+                                  Report running/done plus exit code when done
+  collect --node NAME --run ID --out DIR
+                                  Fetch RESULT.md and agent.log into DIR
+  cancel --node NAME --run ID     Stop a running remote run
+
+Options:
+  --node NAME       Tailnet node name or IP from `pi-fleet nodes`
+  --timeout SECS    Remote agent wall-clock budget (default 1800)
+
+All mutating runs are async: dispatch returns immediately, poll waits for
+nothing. Nothing here touches the parent checkout.
+EOF
+}
+
+node_ip() {
+  local node="$1"
+  if [[ "$node" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    printf '%s' "$node"
+    return
+  fi
+  tailscale status --json | python3 -c "
+import json,sys
+d = json.load(sys.stdin)
+peers = d.get('Peer', {})
+self_node = d.get('Self', {})
+nodes = dict(peers)
+if self_node: nodes['self'] = self_node
+want = '''$node'''.lower()
+for p in nodes.values():
+    host = str(p.get('HostName', ''))
+    dns = str(p.get('DNSName', '').rstrip('.'))
+    if host.lower() == want or dns.lower() == want or dns.lower().startswith(want + '.'):
+        addrs = p.get('TailscaleIPs') or []
+        if addrs: print(addrs[0]); break
+else:
+    sys.exit('unknown tailnet node: $node')
+"
+}
+
+run_id() { date +%Y%m%dT%H%M%S; }
+
+cmd_nodes() {
+  local json=false
+  [[ "${1:-}" == "--json" ]] && json=true
+  if $json; then
+    tailscale status --json | python3 -c "
+import json,sys
+d = json.load(sys.stdin)
+out = []
+for p in list(d.get('Peer', {}).values()) + [d.get('Self', {})]:
+    if not p: continue
+    out.append({'host': p.get('HostName'), 'ip': (p.get('TailscaleIPs') or [None])[0], 'online': p.get('Online', True)})
+print(json.dumps(out))
+"
+    return
+  fi
+  tailscale status | awk 'NR>1 && $0 !~ /offline/ {print $2, $1}'
+}
+
+cmd_preflight() {
+  local node=""
+  while [[ $# -gt 0 ]]; do case "$1" in --node) node="$2"; shift 2;; *) echo "unknown option $1" >&2; exit 2;; esac; done
+  [[ -z "$node" ]] && { echo "preflight requires --node" >&2; exit 2; }
+  require_remote_value node "$node"
+  local ip
+  ip=$(node_ip "$node") || exit 2
+  local failures=0
+  ssh "${SSH_OPTS[@]}" "$ip" true 2>/dev/null || { echo "FAIL: ssh unreachable: $node ($ip). Enable sshd or Tailscale SSH on the node."; failures=$((failures + 1)); }
+  local piv
+  piv=$(ssh "${SSH_OPTS[@]}" "$ip" 'command -v pi && pi --version' 2>/dev/null | tr '\n' ' ') || true
+  if [[ -z "$piv" ]]; then echo "FAIL: pi binary missing on $node. Install pi 0.84.4+ there."; failures=$((failures + 1)); else echo "OK: $piv"; fi
+  local models
+  models=$(ssh "${SSH_OPTS[@]}" "$ip" 'pi --list-models 2>/dev/null | wc -l' 2>/dev/null) || true
+  if [[ -z "$models" || "$models" -lt 2 ]]; then echo "FAIL: no usable model catalog on $node. Run pi auth there."; failures=$((failures + 1)); else echo "OK: model catalog has $models rows"; fi
+  [[ "$failures" -eq 0 ]] && echo "PREFLIGHT PASS: $node" || { echo "PREFLIGHT FAIL: $node ($failures)"; exit 1; }
+}
+
+cmd_dispatch() {
+  local node="" repo="" ref="" brief="" timeout=1800 dry=false
+  while [[ $# -gt 0 ]]; do case "$1" in
+    --node) node="$2"; shift 2;; --repo) repo="$2"; shift 2;;
+    --ref) ref="$2"; shift 2;; --brief-file) brief="$2"; shift 2;;
+    --timeout) timeout="$2"; shift 2;; --dry-run) dry=true; shift;;
+    *) echo "unknown option $1" >&2; exit 2;;
+  esac; done
+  [[ -z "$node" || -z "$repo" || -z "$ref" || -z "$brief" ]] && { echo "dispatch requires --node --repo --ref --brief-file" >&2; exit 2; }
+  require_remote_value node "$node"
+  require_remote_value repo "$repo"
+  require_remote_value ref "$ref"
+  [[ "$timeout" =~ ^[0-9]+$ ]] || { echo "rejecting unsafe --timeout: $timeout" >&2; exit 2; }
+  [[ -f "$brief" ]] || { echo "brief file not found: $brief" >&2; exit 2; }
+  local id="run-$(run_id)"
+  local ip
+  ip=$(node_ip "$node") || exit 2
+  if $dry; then
+    printf '{"run":"%s","node":"%s","ip":"%s","repo":"%s","ref":"%s","timeout":%s,"dryRun":true}\n' "$id" "$node" "$ip" "$repo" "$ref" "$timeout"
+    return
+  fi
+  ssh "${SSH_OPTS[@]}" "$ip" "mkdir -p '$REMOTE_BASE/$id'" || { echo "FAIL: cannot create remote workdir" >&2; exit 1; }
+  scp -q "${SSH_OPTS[@]}" "$brief" "$ip:$REMOTE_BASE/$id/brief.md" || { echo "FAIL: brief upload failed" >&2; exit 1; }
+  # Portable wall-clock budget: a watchdog subshell kills the agent at the
+  # deadline (GNU timeout is absent on macOS). Cancel wins earlier races.
+  ssh "${SSH_OPTS[@]}" "$ip" "export PATH=\"$HOME/.bun/bin:/opt/homebrew/bin:/usr/local/bin:$PATH\"; cd '$REMOTE_BASE/$id' && (git clone --quiet --branch '$ref' --depth 50 '$repo' repo 2>clone.log || (cd repo && git fetch --quiet origin '$ref' && git checkout --quiet '$ref')) && cd repo && ( BRIEF=\"\$(cat ../brief.md)\"; pi --no-session -p \"\$BRIEF\" > ../agent.log 2>&1; echo \$? > ../exit-code ) < /dev/null > /dev/null 2>&1 & echo \$! > ../remote.pid && ( sleep '$timeout'; if kill -0 \$(cat ../remote.pid) 2>/dev/null; then kill \$(cat ../remote.pid) 2>/dev/null; echo TIMEOUT > ../timeout-marker; fi ) < /dev/null > /dev/null 2>&1 & echo started" || { echo "FAIL: remote start failed" >&2; exit 1; }
+  printf '{"run":"%s","node":"%s","ip":"%s","repo":"%s","ref":"%s","timeout":%s}\n' "$id" "$node" "$ip" "$repo" "$ref" "$timeout"
+}
+
+cmd_poll() {
+  local node="" run="" json=false
+  while [[ $# -gt 0 ]]; do case "$1" in --node) node="$2"; shift 2;; --run) run="$2"; shift 2;; --json) json=true; shift;; *) echo "unknown option $1" >&2; exit 2;; esac; done
+  [[ -z "$node" || -z "$run" ]] && { echo "poll requires --node --run" >&2; exit 2; }
+  require_remote_value node "$node"
+  valid_run_id "$run" || { echo "rejecting unsafe --run: $run" >&2; exit 2; }
+  local ip
+  ip=$(node_ip "$node") || exit 2
+  local state
+  state=$(ssh "${SSH_OPTS[@]}" "$ip" "cd '$REMOTE_BASE/$run' 2>/dev/null || { echo missing; exit 0; }; if kill -0 \"\$(cat remote.pid 2>/dev/null)\" 2>/dev/null; then echo running; else echo done; fi") || { echo "FAIL: poll unreachable" >&2; exit 1; }
+  if [[ "$state" == "done" ]]; then
+    local code
+    code=$(ssh "${SSH_OPTS[@]}" "$ip" "cd '$REMOTE_BASE/$run' 2>/dev/null; echo exit=\$(cat exit-code 2>/dev/null || { sleep 2; cat exit-code 2>/dev/null; } || echo none); echo timeout=\$(cat timeout-marker 2>/dev/null || echo no); echo result=\$(test -f RESULT.md && echo present || echo missing); echo ---; tail -c 1500 agent.log 2>/dev/null | tail -5") || code=""
+    if $json; then printf '{"run":"%s","state":"done","tail":%s}\n' "$run" "$(printf '%s' "$code" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')";
+    else printf 'done\n%s\n' "$code"; fi
+  else
+    if $json; then printf '{"run":"%s","state":"%s"}\n' "$run" "$state"; else printf '%s\n' "$state"; fi
+  fi
+}
+
+cmd_collect() {
+  local node="" run="" out=""
+  while [[ $# -gt 0 ]]; do case "$1" in --node) node="$2"; shift 2;; --run) run="$2"; shift 2;; --out) out="$2"; shift 2;; *) echo "unknown option $1" >&2; exit 2;; esac; done
+  [[ -z "$node" || -z "$run" || -z "$out" ]] && { echo "collect requires --node --run --out" >&2; exit 2; }
+  require_remote_value node "$node"
+  valid_run_id "$run" || { echo "rejecting unsafe --run: $run" >&2; exit 2; }
+  local ip
+  ip=$(node_ip "$node") || exit 2
+  mkdir -p -- "$out"
+  scp -q "${SSH_OPTS[@]}" "$ip:$REMOTE_BASE/$run/RESULT.md" "$out/RESULT.md" 2>/dev/null || scp -q "${SSH_OPTS[@]}" "$ip:$REMOTE_BASE/$run/repo/RESULT.md" "$out/RESULT.md" 2>/dev/null || echo "WARN: no RESULT.md yet (agent may still run or failed before writing it)"
+  scp -q "${SSH_OPTS[@]}" "$ip:$REMOTE_BASE/$run/agent.log" "$out/agent.log" || echo "WARN: no agent.log"
+  scp -q -r "${SSH_OPTS[@]}" "$ip:$REMOTE_BASE/$run/repo" "$out/repo" 2>/dev/null || true
+  echo "collected to $out"
+}
+
+cmd_cancel() {
+  local node="" run=""
+  while [[ $# -gt 0 ]]; do case "$1" in --node) node="$2"; shift 2;; --run) run="$2"; shift 2;; *) echo "unknown option $1" >&2; exit 2;; esac; done
+  [[ -z "$node" || -z "$run" ]] && { echo "cancel requires --node --run" >&2; exit 2; }
+  require_remote_value node "$node"
+  valid_run_id "$run" || { echo "rejecting unsafe --run: $run" >&2; exit 2; }
+  local ip
+  ip=$(node_ip "$node") || exit 2
+  ssh "${SSH_OPTS[@]}" "$ip" "kill \"\$(cat '$REMOTE_BASE/$run/remote.pid' 2>/dev/null)\" 2>/dev/null; echo cancelled"
+}
+
+case "${1:-}" in
+  nodes) shift; cmd_nodes "$@";; preflight) shift; cmd_preflight "$@";;
+  dispatch) shift; cmd_dispatch "$@";; poll) shift; cmd_poll "$@";;
+  collect) shift; cmd_collect "$@";; cancel) shift; cmd_cancel "$@";;
+  *) usage; exit 2;;
+esac

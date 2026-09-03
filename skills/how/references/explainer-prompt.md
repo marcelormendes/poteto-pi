@@ -16,7 +16,7 @@ You are writing an architectural explanation for a senior engineer. Multiple exp
 
 ## Instructions
 
-The passes each investigated a different angle of the same subsystem, each as its own block in the same session. Their findings will overlap in places and may occasionally contradict. Reconcile them. Merge overlapping descriptions, resolve contradictions by checking the code yourself, and weave the separate slices into a unified picture.
+The passes each investigated a different angle of the same subsystem, launched as siblings. Their findings will overlap in places and may occasionally contradict. Reconcile them. Merge overlapping descriptions, resolve contradictions by checking the code yourself, and weave the separate slices into a unified picture.
 
 Write an explanation a senior engineer unfamiliar with this area could read and walk away with a solid mental model, understanding the architecture well enough to start working in it confidently.
 
