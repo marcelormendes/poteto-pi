@@ -100,7 +100,7 @@ export default function pstackPi(pi: ExtensionAPI): void {
         `Pstack status: ${!enabled ? "off" : findings.length === 0 ? "clean" : "drift detected"}`,
         `Router: ${routerSent ? "loaded" : "pending"}`,
         ...(findings.length === 0
-          ? ["Guardrails: 6 adapters disabled, worktree default on, depth >= 2"]
+          ? ["Guardrails: 6 adapters disabled, no global worktree default, depth >= 2"]
           : findings.map((finding) => `Missing: ${finding.where} ${finding.key} (need ${finding.expected})`)),
         updateLine,
       ];

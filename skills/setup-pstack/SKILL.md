@@ -83,9 +83,10 @@ writing (settings edits are hard to review after the fact).
   `codex-exec`, `codex-exec-writer`. These adapter identities shell out to
   other CLIs or external providers; pstack runs local only.
 - In the pi-subagents extension config
-  (`~/.pi/agent/extensions/subagent/config.json`): set `worktree: true`
-  so launches that forget the flag are still isolated, and
-  `maxSubagentDepth: 2` (flat panels need 1, track coordinators need 2).
+  (`~/.pi/agent/extensions/subagent/config.json`): ensure `worktree` is not
+  `true` (read-only roles omit the flag, so a global default would fail them
+  outside git repos), and set `maxSubagentDepth: 2` (flat panels need 1,
+  track coordinators need 2). Writers pass `worktree: true` per launch.
 - Require `pi-subagents` installed. Refuse to finish setup when it is
   missing: role delegation without it silently degrades to prose.
 
