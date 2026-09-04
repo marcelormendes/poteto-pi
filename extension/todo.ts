@@ -1,0 +1,37 @@
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
+
+interface TodoItem {
+  text: string;
+  done: boolean;
+}
+
+export function registerTodoTool(pi: ExtensionAPI): void {
+  let items: TodoItem[] = [];
+  pi.registerTool({
+    name: "pstack_todo",
+    label: "Pstack todo",
+    description:
+      "Session-scoped todo list for multi-step pstack work. Set the full list " +
+      "up front, check items as they complete, read to review. Keep items short; " +
+      "the first item of a playbook run names the playbook being followed.",
+    parameters: Type.Object({
+      action: Type.Union([Type.Literal("set"), Type.Literal("get"), Type.Literal("check")]),
+      items: Type.Optional(Type.Array(Type.String())),
+      index: Type.Optional(Type.Number({ description: "Zero-based item for check" })),
+    }),
+    async execute(_toolCallId, params) {
+      if (params.action === "set") {
+        items = (params.items ?? []).map((text) => ({ text, done: false }));
+      } else if (params.action === "check") {
+        const item = params.index === undefined ? undefined : items[params.index];
+        if (!item) {
+          return { content: [{ type: "text" as const, text: `no todo at index ${params.index}` }], details: {} };
+        }
+        item.done = true;
+      }
+      const lines = items.map((item, index) => `${item.done ? "[x]" : "[ ]"} ${index}: ${item.text}`);
+      return { content: [{ type: "text" as const, text: lines.join("\n") || "(empty todo)" }], details: {} };
+    },
+  });
+}
