@@ -28,24 +28,32 @@ describe("subagent guardrails", () => {
     expect(second.changes).toEqual([]);
   });
 
-  test("extension config defaults to worktree isolation and depth 2", () => {
+  test("extension config keeps isolation opt-in and depth 2", () => {
     const { config, changes } = mergeGuardrailsIntoExtensionConfig({ missions: { enabled: true } });
-    expect(config.worktree).toBe(true);
+    expect(config.worktree).toBeUndefined();
     expect(config.maxSubagentDepth).toBe(2);
     expect(config.missions).toEqual({ enabled: true });
-    expect(changes).toEqual(["worktree=true", "maxSubagentDepth=2"]);
+    expect(changes).toEqual(["maxSubagentDepth=2"]);
   });
 
-  test("verification fails closed on every missing guardrail", () => {
+  test("extension config downgrades a global worktree default", () => {
+    const { config, changes } = mergeGuardrailsIntoExtensionConfig({ worktree: true });
+    expect(config.worktree).toBe(false);
+    expect(changes).toContain("worktree=false");
+  });
+
+  test("verification fails closed on missing guardrails but not on absent worktree", () => {
     const findings = verifyGuardrails({ piSettings: {}, extensionConfig: {} });
     const keys = findings.map((finding) => finding.key).sort();
     expect(keys).toEqual(
       [
         ...ADAPTER_IDENTITIES.map((identity) => `subagents.agentOverrides.${identity}.disabled`),
         "maxSubagentDepth",
-        "worktree",
       ].sort(),
     );
+    expect(
+      verifyGuardrails({ piSettings: {}, extensionConfig: { worktree: true } }).map((finding) => finding.key),
+    ).toContain("worktree");
   });
 
   test("verification passes on merged output", () => {

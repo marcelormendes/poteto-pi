@@ -53,16 +53,18 @@ export const mergeGuardrailsIntoSettings = (
 };
 
 // Merge pstack guardrails into the pi-subagents extension config without
-// touching unrelated keys. worktree:true makes managed worktree isolation
-// the default so a launch that forgets the flag is still isolated.
+// touching unrelated keys. A global worktree:true default would force
+// worktree isolation onto read-only roles and fail them outside git repos,
+// so it is downgraded to false; absent stays absent. Every writer launch
+// in our skills passes worktree:true explicitly.
 export const mergeGuardrailsIntoExtensionConfig = (
   config: Record<string, unknown>,
 ): { config: Record<string, unknown>; changes: string[] } => {
   const merged = { ...config };
   const changes: string[] = [];
-  if (merged.worktree !== true) {
-    merged.worktree = true;
-    changes.push("worktree=true");
+  if (merged.worktree === true) {
+    merged.worktree = false;
+    changes.push("worktree=false");
   }
   if (typeof merged.maxSubagentDepth !== "number" || merged.maxSubagentDepth < REQUIRED_MAX_SUBAGENT_DEPTH) {
     merged.maxSubagentDepth = REQUIRED_MAX_SUBAGENT_DEPTH;
@@ -93,8 +95,8 @@ export const verifyGuardrails = (options: {
     }
   }
   const config = isRecord(options.extensionConfig) ? options.extensionConfig : {};
-  if (config.worktree !== true) {
-    findings.push({ where: "subagent extension config", key: "worktree", expected: "true", actual: describe(config.worktree) });
+  if (config.worktree === true) {
+    findings.push({ where: "subagent extension config", key: "worktree", expected: "not true", actual: "true" });
   }
   if (typeof config.maxSubagentDepth !== "number" || config.maxSubagentDepth < REQUIRED_MAX_SUBAGENT_DEPTH) {
     findings.push({
