@@ -21,34 +21,31 @@ and select the installed specialist skill that best fits, then invoke it
 explicitly via /skill:name (models do not reliably self-load skills).
 Manual slash commands are overrides, not a prerequisite.
 
-## Runtime invariants (PI has no subagents)
+## Runtime invariants
 
-- All work happens in this session, sequentially. Panels run as numbered
-  passes, one after another, never in parallel.
-- Every parallel-writer construct from the skill text maps to a sequential
-  ownership block: finish one slice completely before starting the next.
-- Arena candidates each get their own \`git worktree\` checkout created via
-  \`bash\`. Blind them as Candidate A/B/C in files under /tmp. Merge only the
-  selected base plus explicitly grafted ideas, with user confirmation.
-- Isolated checkouts are never merged wholesale except the selected base.
-- Model roles are advisory: the router names a role and a \`--model\`
-  selector (e.g. \`pi --model provider/id\` or Ctrl+P cycling). The user
-  switches; the extension cannot switch models programmatically.
-- Verify every claim against the real surface (commands run, files read).
-  Report evidence, not assertions.
+- Panels run as parallel subagent passes over "pstack-*" role agents with
+  explicit per-run models. Without the "subagent" tool, fall back to
+  numbered sequential passes, one per role, switching the session model
+  between passes.
+- Writers run isolated: pass "worktree: true" plus a gate, and merge only
+  the selected result with user confirmation. Readers omit the flag.
+- Blind parallel candidates as Candidate A/B/C; never name models in
+  shared artifacts. Cross-judge on a contrasting model family.
+- Verify every claim against the real surface (commands run, files read,
+  transcripts inspected). Report evidence, not assertions.
 
 ## Specialist skills
 
-- how: evidence-first explanation with sequential skeptical passes
+- how: evidence-first explanation with parallel explorer and critic passes
 - why: source-control and repository investigation with epistemic prefixes
 - architect: competing designs from caller usage, then one implementation
-- arena: sequential candidates in git worktrees, blinded adjudication
-- swarm: sequential disjoint slices with a merge contract
-- interrogate: identical evidence and rubric per sequential reviewer pass
+- arena: parallel candidates in git worktrees, blinded adjudication
+- swarm: parallel disjoint slices with a merge contract
+- interrogate: identical evidence and rubric per reviewer pass
 - reflect: tooling, judgment, and divergent lenses, then synthesis
 - recall / show-me-your-work: transcript evidence via the pstack transcripts tool
 
-## Role to model mapping (defaults, override in ~/.pi/agent/pstack/config.yml)
+## Role to model mapping (defaults, override in ~/.pi/agent/pstack/models.md)
 
 - exploration, investigation, swarm, feature, refactor: fast local default
 - explanation, synthesis, judgment, hardest: strongest reasoning model
