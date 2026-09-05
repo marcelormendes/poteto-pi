@@ -12,10 +12,10 @@ The vendored source is pinned at `7314f72` and matches upstream pstack at
 Validated with Pi 0.84.4. Bun runs the bundled orchestration and PR
 watching helpers; Python 3 runs the live verification suite.
 
-From another project, install this checkout with its absolute path:
+Install the published package:
 
 ```bash
-pi install /absolute/path/to/poteto-pi
+pi install npm:poteto-pi
 pi
 ```
 
@@ -24,6 +24,9 @@ Then run:
 ```text
 /skill:setup-pstack
 ```
+
+For development, install a local checkout with
+`pi install /absolute/path/to/poteto-pi` instead.
 
 Setup detects available models, proposes a role table, verifies credentials
 with real child calls, and writes `pstack/models.md` inside the Pi agent
@@ -72,6 +75,8 @@ The package also supplies `pstack_todo`, bounded project-scoped
 `loop` is a skill invocation, not a Pi core scheduling command.
 
 ## Verify
+
+Run these development checks from a Git checkout of this repository:
 
 ```bash
 bun install --frozen-lockfile

@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "pstack-pi",
+      "name": "poteto-pi",
       "devDependencies": {
         "@earendil-works/pi-coding-agent": "0.84.4",
         "@types/bun": "latest",

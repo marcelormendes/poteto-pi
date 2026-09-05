@@ -1,10 +1,21 @@
 {
   "name": "poteto-pi",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "description": "Lauren Tan's pstack methodology as a PI.dev package: skills, playbooks, local subagent roles, and a routing extension",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcelormendes/poteto-pi.git"
+  },
+  "homepage": "https://github.com/marcelormendes/poteto-pi#readme",
+  "bugs": {
+    "url": "https://github.com/marcelormendes/poteto-pi/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "pi": {
     "extensions": [
       "./extension/pstack.ts"
