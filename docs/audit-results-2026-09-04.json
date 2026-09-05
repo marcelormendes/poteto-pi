@@ -1,0 +1,1529 @@
+{
+  "date": "2026-09-04",
+  "evidenceRoot": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57",
+  "baseCommit": "7edc2fdc25efd603a48602eb229fc8050970c79b",
+  "upstreamCommit": "93b00b89ef425a9c1bac0d0b317dfc49c930ac99",
+  "piVersion": "0.84.4",
+  "bunVersion": "1.3.14",
+  "companionVersions": {
+    "pi-subagents": "0.64.0",
+    "pi-mcp-adapter": "2.32.1",
+    "@narumitw/pi-goal": "0.54.4",
+    "pi-web-access": "0.27.0"
+  },
+  "skillCases": [
+    {
+      "skill": "architect",
+      "case": "architect__loaded",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 3120,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/architect__loaded",
+      "transcriptSha256": "eae1a60032914edd51a0ef62a6dda4e1a03e03e0c0e49af5f077d4dc785b6855",
+      "children": [
+        {
+          "agent": "pstack-architect-runners-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 3763,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/architect__loaded/subagent-artifacts/a9659ddc-58e8-4798-83f0-6182a104b2f7_pstack-architect-runners-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 4457,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/architect__loaded/subagent-artifacts/2bd4f309-4f73-42b0-bf9c-d2c8e61035db_pstack-arena-cross-judges-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 2118,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/architect__loaded/subagent-artifacts/b6e61397-ebb3-408e-a119-957d6bd024fc_pstack-architect-runners-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1587,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/architect__loaded/subagent-artifacts/d1aab34b-4b69-4832-a6ad-8261ac2bdac0_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "arena",
+      "case": "arena__workflow",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 5570,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/arena__workflow",
+      "transcriptSha256": "f0fdf7af34797ab3223b034ae0190941ead5dafdbfd9aec7cf830834175857c7",
+      "children": [
+        {
+          "agent": "pstack-arena-runners-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1727,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/arena__workflow/subagent-artifacts/a504e92f-cc26-4674-91bf-c9a3009845bb_pstack-arena-runners-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 9186,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/arena__workflow/subagent-artifacts/725002e0-aefe-4f83-94df-028e0ddfe599_pstack-arena-cross-judges-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-runners-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 7795,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/arena__workflow/subagent-artifacts/409f77e1-66ef-42bb-aec5-433be73f8ba3_pstack-arena-runners-2_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "automate-me",
+      "case": "automate-me__extra",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2660,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/automate-me__extra",
+      "transcriptSha256": "f3fc1db562ae66d232b1e677743888ebed45965aa229c2cf0713351916881e17",
+      "children": []
+    },
+    {
+      "skill": "blast-radius",
+      "case": "blast-radius__extra",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 4019,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/blast-radius__extra",
+      "transcriptSha256": "bfc5d815ad6f766b5e515851cd8bf5c3a838001d57b714740a8291ee52ad32e9",
+      "children": [
+        {
+          "agent": "pstack-arena-runners-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 8157,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/blast-radius__extra/subagent-artifacts/3803dea9-b757-4bbd-8ba3-d9bf7894e8da_pstack-arena-runners-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-runners-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 2078,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/blast-radius__extra/subagent-artifacts/65a2f208-30e5-42aa-8c0a-04c23bf2d2d9_pstack-arena-runners-1_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "bro",
+      "case": "bro__pathfix",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 25,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/bro__pathfix",
+      "transcriptSha256": "6095cfaaaf004096a41118bad51ad5d3200603a164f56af067c8f6a7ab7e58ec",
+      "children": []
+    },
+    {
+      "skill": "create-verification-skill",
+      "case": "create-verification-skill__safe",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 4482,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/create-verification-skill__safe",
+      "transcriptSha256": "ac1f722ae72baf7919a82ea919f69ef59c6cacb253809c00cdcdc33afc77be06",
+      "children": []
+    },
+    {
+      "skill": "figure-it-out",
+      "case": "figure-it-out__extra",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 8276,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/figure-it-out__extra",
+      "transcriptSha256": "6196ecc705571876b33406129682028691fb6b17995b71a15c4c57005895e9cc",
+      "children": [
+        {
+          "agent": "pstack-judgment-prose",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 16334,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/figure-it-out__extra/subagent-artifacts/a961bea3-3a1c-4c0f-ba29-de85a6d5fb2c_pstack-judgment-prose_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "how",
+      "case": "how__readonly",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 4676,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/how__readonly",
+      "transcriptSha256": "4e1dc0eede7ac79f39f3570fe31cb0a559d41e995b3eef71bf8c2c9585ce0efd",
+      "children": [
+        {
+          "agent": "pstack-how-critics-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 4616,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/how__readonly/subagent-artifacts/9fa80b74-7b25-4bd2-8a5b-561db5b2fba6_pstack-how-critics-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 2370,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/how__readonly/subagent-artifacts/b932c88d-fdf5-4919-a64b-545d1add97ef_pstack-how-explainer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1015,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/how__readonly/subagent-artifacts/48f98e18-4276-4e7b-bb12-280722438b71_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1181,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/how__readonly/subagent-artifacts/e35c383f-f206-4e71-962c-cfb7c8893440_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1561,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/how__readonly/subagent-artifacts/77074ca7-42ca-4e46-b069-8eef69525f60_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-critics-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1215,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/how__readonly/subagent-artifacts/2001f70e-c50d-435a-bcf0-893a4c693b3d_pstack-how-critics-1_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "interrogate",
+      "case": "interrogate__bounded-review",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 3547,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/interrogate__bounded-review",
+      "transcriptSha256": "e30d40a7fb35fb6818bd92d8704530796a72be9a0e5f52d0e30d3f1e61f7aa0f",
+      "children": [
+        {
+          "agent": "pstack-interrogate-reviewers-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1700,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/interrogate__bounded-review/subagent-artifacts/8d90f478-92d6-4474-bedc-3362b5a2f477_pstack-interrogate-reviewers-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-interrogate-reviewers-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 5333,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/interrogate__bounded-review/subagent-artifacts/d282cec2-fa56-4a60-85d0-da1cde042265_pstack-interrogate-reviewers-2_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "loop",
+      "case": "loop__compact",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1806,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/loop__compact",
+      "transcriptSha256": "1d7ad0800413401256594488e9bc50294ec1128af0995c6f391d9fb74a3acf34",
+      "children": []
+    },
+    {
+      "skill": "maintain-verification-skill",
+      "case": "maintain-verification-skill__final",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2870,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/maintain-verification-skill__final",
+      "transcriptSha256": "9095c4341c904adaf21e0674c29ba2472d77215efe482666c2d846f4bb020aae",
+      "children": [
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 830,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/maintain-verification-skill__final/subagent-artifacts/e959e418-3b16-4423-bc0c-99e7a5d3c33b_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1247,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/maintain-verification-skill__final/subagent-artifacts/4f2c6dc0-d666-4ac7-997d-38febf6bfc39_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 652,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/maintain-verification-skill__final/subagent-artifacts/45fdbfff-a5fa-4780-8907-07d003212d3a_pstack-how-explorer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "no-comments",
+      "case": "no-comments__loaded",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1160,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/no-comments__loaded",
+      "transcriptSha256": "73a7d025110565f262ee42c32c2d9da16ad0630484a35228b1e01b21636962f3",
+      "children": [
+        {
+          "agent": "pstack-comment-sicko",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1014,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/no-comments__loaded/subagent-artifacts/179945a6-4f46-4903-836e-eb2653e1fd76_pstack-comment-sicko_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "poteto-mode",
+      "case": "poteto-mode__integrated",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 6739,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated",
+      "transcriptSha256": "4de17b29ccebf72a0a9118d75fb4a5dd1f46e17ac71f9ae1981aa314fc189cbc",
+      "children": [
+        {
+          "agent": "pstack-bug-fix",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1836,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated/subagent-artifacts/9e724e68-7820-4ce3-a0e6-dbda7b7d57f7_pstack-bug-fix_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 847,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated/subagent-artifacts/4fc2126b-3ca7-42c7-9257-b756a040560f_pstack-how-explainer_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1602,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated/subagent-artifacts/e2a8dd32-11bd-42df-97ec-1a134dc29d76_pstack-architect-runners-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 3020,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated/subagent-artifacts/eef48d3e-5c14-4fcd-8aa4-bb93d9608e5c_pstack-arena-cross-judges-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-why-investigator",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1482,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated/subagent-artifacts/8bc50825-a4e7-44c8-b362-3fd4e1d7c53b_pstack-why-investigator_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 15286,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated/subagent-artifacts/998b693b-4d80-4c09-a14e-2e315416ec8f_pstack-architect-runners-2_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-boundary-discipline",
+      "case": "principle-boundary-discipline__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1258,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-boundary-discipline__principles",
+      "transcriptSha256": "3a3969825c4af8f11e2ce20d659912a1616073e51a7199a96e14a69cd508e0e2",
+      "children": []
+    },
+    {
+      "skill": "principle-build-the-lever",
+      "case": "principle-build-the-lever__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2377,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-build-the-lever__principles",
+      "transcriptSha256": "c1aa42cff1ec8fb803f2e46f2114806fdfbce045370848b9691a74f6a632df59",
+      "children": []
+    },
+    {
+      "skill": "principle-encode-lessons-in-structure",
+      "case": "principle-encode-lessons-in-structure__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1337,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-encode-lessons-in-structure__principles",
+      "transcriptSha256": "3e3c41a4dc4433c386fbf1ce8a6975b02bc60c10f7661b42da596da2d095946a",
+      "children": []
+    },
+    {
+      "skill": "principle-exhaust-the-design-space",
+      "case": "principle-exhaust-the-design-space__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2896,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-exhaust-the-design-space__principles",
+      "transcriptSha256": "d6af1160df54bf16386db4bc462a74bf64cee031bd6825df91ea936407c68b38",
+      "children": [
+        {
+          "agent": "pstack-architect-runners-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1460,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-exhaust-the-design-space__principles/subagent-artifacts/2b11f6db-1407-4d5c-88cb-7a30ea509e72_pstack-architect-runners-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1076,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-exhaust-the-design-space__principles/subagent-artifacts/63e3b79c-87be-4d97-84c6-41cff8f597a5_pstack-arena-cross-judges-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 7183,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-exhaust-the-design-space__principles/subagent-artifacts/34ac950a-b8de-4595-acbc-01e6f2ee44cb_pstack-architect-runners-2_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-experience-first",
+      "case": "principle-experience-first__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1756,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-experience-first__principles",
+      "transcriptSha256": "67e5fc07992db7d9defb87f169540803d0ca544a3c7a700d8c054488182dac4c",
+      "children": []
+    },
+    {
+      "skill": "principle-fix-root-causes",
+      "case": "principle-fix-root-causes__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1335,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-fix-root-causes__principles",
+      "transcriptSha256": "bc4db8df090756c056b42846fb79a635d5cadec3648d7b15cc05c56a578735dc",
+      "children": []
+    },
+    {
+      "skill": "principle-foundational-thinking",
+      "case": "principle-foundational-thinking__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1034,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-foundational-thinking__principles",
+      "transcriptSha256": "655338217032684d026eaf76ad77f2b583fe86338dad100feca357acf656f3fb",
+      "children": []
+    },
+    {
+      "skill": "principle-guard-the-context-window",
+      "case": "principle-guard-the-context-window__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 712,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-guard-the-context-window__principles",
+      "transcriptSha256": "2fce0da445653c669dfa07762d43668673a8aeb823b755d865362b6404c2d653",
+      "children": []
+    },
+    {
+      "skill": "principle-laziness-protocol",
+      "case": "principle-laziness-protocol__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1021,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-laziness-protocol__principles",
+      "transcriptSha256": "ac1749e7dd5a76bb950e822951222b8c596b1d3c9e5bab41807feb7c24f93ac2",
+      "children": []
+    },
+    {
+      "skill": "principle-make-operations-idempotent",
+      "case": "principle-make-operations-idempotent__contract",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1508,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-make-operations-idempotent__contract",
+      "transcriptSha256": "d68fd77e04f99145277351f71f1c5514e9aacf44e840cc1fc317c57492fd41e4",
+      "children": [
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 748,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-make-operations-idempotent__contract/subagent-artifacts/0c02af26-e45d-4ad2-a4cf-de701f375828_pstack-how-explainer_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-migrate-callers-then-delete-legacy-apis",
+      "case": "principle-migrate-callers-then-delete-legacy-apis__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1637,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-migrate-callers-then-delete-legacy-apis__principles",
+      "transcriptSha256": "aa28f2a7f0b1b06bee45a1673f835666ce03f9f53a93e31025ad558684644be0",
+      "children": [
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 643,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-migrate-callers-then-delete-legacy-apis__principles/subagent-artifacts/68a2a82a-e294-40e4-9798-ab0cd987e738_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-minimize-reader-load",
+      "case": "principle-minimize-reader-load__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1509,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-minimize-reader-load__principles",
+      "transcriptSha256": "2279a36a4d3cca8bd66dbef6e7e5a79e132921a872309891d43a7432769b55fc",
+      "children": [
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1148,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-minimize-reader-load__principles/subagent-artifacts/43c1e046-191f-451d-9be1-b1977e073fee_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-model-the-domain",
+      "case": "principle-model-the-domain__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1523,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-model-the-domain__principles",
+      "transcriptSha256": "50f2997ca50f7cd38a48be83314ccc73cf15c4b7ea618c5a3c45fa8f38c3d797",
+      "children": [
+        {
+          "agent": "pstack-how-critics-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 5277,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-model-the-domain__principles/subagent-artifacts/732bf652-bc59-43a6-b737-982e926c33c5_pstack-how-critics-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 598,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-model-the-domain__principles/subagent-artifacts/72b5e304-ce92-4734-ab98-8099009b94ea_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-never-block-on-the-human",
+      "case": "principle-never-block-on-the-human__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1524,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-never-block-on-the-human__principles",
+      "transcriptSha256": "7210df6d36a24bc93a3dfbeec52dc31019ca102789a9277132d8809345793b16",
+      "children": [
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 450,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-never-block-on-the-human__principles/subagent-artifacts/03e02c7d-f7ed-4c9a-8ca7-38c93dc7bd10_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-outcome-oriented-execution",
+      "case": "principle-outcome-oriented-execution__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 877,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-outcome-oriented-execution__principles",
+      "transcriptSha256": "f121f66efdeb1375c14f2cb89e1ba3b2078460fc7f6f2a37db8175190ea29b44",
+      "children": []
+    },
+    {
+      "skill": "principle-prove-it-works",
+      "case": "principle-prove-it-works__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1809,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-prove-it-works__principles",
+      "transcriptSha256": "63690f4398105f4d4402794a71189435c664675f12917810d8f0e7d09d301ef7",
+      "children": []
+    },
+    {
+      "skill": "principle-redesign-from-first-principles",
+      "case": "principle-redesign-from-first-principles__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1181,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-redesign-from-first-principles__principles",
+      "transcriptSha256": "b76ca1cde0d20b29fdffead90765f525b4e283b23dffd3c57b5101827d29762a",
+      "children": []
+    },
+    {
+      "skill": "principle-separate-before-serializing-shared-state",
+      "case": "principle-separate-before-serializing-shared-state__contract",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 746,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-separate-before-serializing-shared-state__contract",
+      "transcriptSha256": "1d4f378d5c128f5ad0c74754739c303ca2562eecdedc398d661d18195575af61",
+      "children": []
+    },
+    {
+      "skill": "principle-sequence-verifiable-units",
+      "case": "principle-sequence-verifiable-units__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1863,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-sequence-verifiable-units__principles",
+      "transcriptSha256": "ac693163f50ee48585e351755cbe7e76018e61c7d8f3b9dc6fb6d89067d210ea",
+      "children": [
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 790,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-sequence-verifiable-units__principles/subagent-artifacts/5c7f9af8-3f2d-41e9-819f-a9998ea1f465_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "principle-subtract-before-you-add",
+      "case": "principle-subtract-before-you-add__contract",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1250,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-subtract-before-you-add__contract",
+      "transcriptSha256": "8e394ec15f17500eb3df7a96bd22c4b613125df99680a1d9fc85d4ae6c8fcda1",
+      "children": []
+    },
+    {
+      "skill": "principle-type-system-discipline",
+      "case": "principle-type-system-discipline__principles",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1266,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-type-system-discipline__principles",
+      "transcriptSha256": "66e00f0ee7539c466ddb8563de39961cbc421d298e4b8cf917c883ee23724aed",
+      "children": [
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 568,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/principle-type-system-discipline__principles/subagent-artifacts/0cdc3a7b-62b3-463b-9abc-45f245bf8b01_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "recall",
+      "case": "recall__final",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1157,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/recall__final",
+      "transcriptSha256": "3392fc9e109b022eaad4de1b8bbb9d2992da7abda914465af6de6efee348ed3a",
+      "children": []
+    },
+    {
+      "skill": "reflect",
+      "case": "reflect__final",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2790,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/reflect__final",
+      "transcriptSha256": "8bf32fd85254c29311949819e356ce18da0008db5a355383b5f8a0ab05bdb5c0",
+      "children": [
+        {
+          "agent": "pstack-reflect-tooling",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 998,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/reflect__final/subagent-artifacts/f2daea57-621b-4bf0-8387-3bacc9aef891_pstack-reflect-tooling_0_meta.json"
+        },
+        {
+          "agent": "pstack-reflect-divergent",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 980,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/reflect__final/subagent-artifacts/934f74b2-c16d-4186-a55e-f6a86219bb98_pstack-reflect-divergent_0_meta.json"
+        },
+        {
+          "agent": "pstack-reflect-judgment",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 736,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/reflect__final/subagent-artifacts/a6501f37-8a64-40f9-8b9c-7f7637ddbd75_pstack-reflect-judgment_0_meta.json"
+        },
+        {
+          "agent": "pstack-reflect-synthesizer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 955,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/reflect__final/subagent-artifacts/16f72075-770a-487f-bd5c-9022e40265e8_pstack-reflect-synthesizer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "setup-pstack",
+      "case": "setup-pstack__final",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2669,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/setup-pstack__final",
+      "transcriptSha256": "510523028365ee7b8b2fada21bbdd213b986b5c84c992050ae5f91c67d536795",
+      "children": [
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 96,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/setup-pstack__final/subagent-artifacts/56ccabfb-7ea8-4e1d-b326-93ac6a85c979_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 7,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/setup-pstack__final/subagent-artifacts/b7191db1-778d-41eb-8f84-342d7d675287_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 36,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/setup-pstack__final/subagent-artifacts/10b91b6f-a4c6-4d5e-a858-fe215f354adb_pstack-how-explorer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "show-me-your-work",
+      "case": "show-me-your-work__extra",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 3343,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/show-me-your-work__extra",
+      "transcriptSha256": "862f1ed6de6fdf822a410091737c1413b502b3e30d3f8599cccf06f4c40e768f",
+      "children": [
+        {
+          "agent": "pstack-judgment-prose",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 14537,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/show-me-your-work__extra/subagent-artifacts/42341d8b-1dc6-4a76-88be-c8d808f556e3_pstack-judgment-prose_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "swarm",
+      "case": "swarm__loaded",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2388,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/swarm__loaded",
+      "transcriptSha256": "abfa165e061c137668dd63ca419537c7dcdc2dcec682c1d2e1e92ac4f0396bea",
+      "children": [
+        {
+          "agent": "pstack-swarm-worker",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1997,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/swarm__loaded/subagent-artifacts/4123c5c0-e4af-4758-a15e-776f7817bbfb_pstack-swarm-worker_0_meta.json"
+        },
+        {
+          "agent": "pstack-swarm-worker",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 2543,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/swarm__loaded/subagent-artifacts/a42c72de-c138-4119-937e-d71a53d8fac9_pstack-swarm-worker_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "tdd",
+      "case": "tdd__extra",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1669,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/tdd__extra",
+      "transcriptSha256": "8bd687fcdc9399bc439cf10b9064129f2935806102740a5a9c9b4503f83d58cc",
+      "children": []
+    },
+    {
+      "skill": "teach",
+      "case": "teach__synthesis",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2226,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/teach__synthesis",
+      "transcriptSha256": "808a2c8d0b6cbba6cb37d99ba1305e0f2cbe0ae9aa302df9ae85f3a690bb7685",
+      "children": [
+        {
+          "agent": "pstack-why-investigator",
+          "model": "opencode-go/glm-5.3-flash:medium",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 3232,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/teach__synthesis/subagent-artifacts/3710aafe-52c7-438d-8e20-642aa29c82ea_pstack-why-investigator_0_meta.json"
+        },
+        {
+          "agent": "pstack-why-synthesizer",
+          "model": "openai-codex/gpt-5.6-sol:high",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1713,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/teach__synthesis/subagent-artifacts/86000014-e53a-486d-ab1d-a7a8906fce09_pstack-why-synthesizer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:high",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1166,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/teach__synthesis/subagent-artifacts/2b782a9c-d0a5-4b11-9742-dee4eb6d1ff4_pstack-how-explainer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "technical-writing",
+      "case": "technical-writing__extra",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 2225,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/technical-writing__extra",
+      "transcriptSha256": "d1c67aeafa24d0b56717bff10145797e497acaed85d588600570ba7b2249ddf1",
+      "children": []
+    },
+    {
+      "skill": "typescript-best-practices",
+      "case": "typescript-best-practices__extra",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1131,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/typescript-best-practices__extra",
+      "transcriptSha256": "a812ecde7e1b24c30f40ce02906472f5c3221d7638cb3de94ad5bf0dc2addf85",
+      "children": []
+    },
+    {
+      "skill": "unslop",
+      "case": "unslop__pathfix",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 142,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/unslop__pathfix",
+      "transcriptSha256": "bcc432b414f036a0ff2cbe63ed114f1609ac97a5369794d53360b8a467f64fd2",
+      "children": []
+    },
+    {
+      "skill": "why",
+      "case": "why__loaded",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 3083,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/why__loaded",
+      "transcriptSha256": "8bb9c1b454130921a1148f1582ee7a34cee1c15b77dcbe69f635aabcc1993a2a",
+      "children": [
+        {
+          "agent": "pstack-why-synthesizer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 2178,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/why__loaded/subagent-artifacts/b04d5ff5-74e4-4a9a-97ad-6271a594c9e0_pstack-why-synthesizer_0_meta.json"
+        },
+        {
+          "agent": "pstack-why-investigator",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1812,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/why__loaded/subagent-artifacts/686125af-c31f-44ce-b154-d80ddcc81b51_pstack-why-investigator_0_meta.json"
+        }
+      ]
+    }
+  ],
+  "roleBatches": [
+    {
+      "case": "roles-1__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 704,
+      "children": [
+        {
+          "agent": "pstack-architect-runners-3",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 34,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-1__roster/subagent-artifacts/6d2221f9-13f5-4919-8720-d394c4be6113_pstack-architect-runners-3_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-1",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 183,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-1__roster/subagent-artifacts/f85df429-fce0-4492-a80b-793d8cd75cbe_pstack-architect-runners-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-2",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 61,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-1__roster/subagent-artifacts/44e286b4-9fd0-4730-b92d-807af3535eae_pstack-architect-runners-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-4",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 207,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-1__roster/subagent-artifacts/06b807b8-5529-430b-ba4a-defa8a1e727a_pstack-architect-runners-4_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-2__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 854,
+      "children": [
+        {
+          "agent": "pstack-arena-cross-judges-1",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 185,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-2__roster/subagent-artifacts/212798de-26c0-4562-849a-c46c58a654d3_pstack-arena-cross-judges-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-4",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 252,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-2__roster/subagent-artifacts/18a07f96-477a-433f-885b-57e0480440e5_pstack-arena-cross-judges-4_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-3",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 808,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-2__roster/subagent-artifacts/01b173f0-4e8e-4cbd-86f0-246cf4117069_pstack-arena-cross-judges-3_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-2",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 55,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-2__roster/subagent-artifacts/d4d98028-3101-4488-806a-5ccb0bd6a892_pstack-arena-cross-judges-2_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-3__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 970,
+      "children": [
+        {
+          "agent": "pstack-arena-runners-4",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 203,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-3__roster/subagent-artifacts/f5f41945-3756-4850-acd1-1b801d3d5f14_pstack-arena-runners-4_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-runners-2",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 36,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-3__roster/subagent-artifacts/f75f50ff-20a8-43b3-af5c-3d671be9f937_pstack-arena-runners-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-runners-3",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 159,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-3__roster/subagent-artifacts/2d12e2a7-c738-4c97-8ea8-abbe4b1b1179_pstack-arena-runners-3_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-runners-1",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 196,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-3__roster/subagent-artifacts/2864cdc8-ec31-403c-b9f5-87fc350dad7a_pstack-arena-runners-1_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-4__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 1011,
+      "children": [
+        {
+          "agent": "pstack-feature",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 93,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-4__roster/subagent-artifacts/4fd1ae65-a666-4d21-ba6d-ed77ce93d369_pstack-feature_0_meta.json"
+        },
+        {
+          "agent": "pstack-hardest",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 154,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-4__roster/subagent-artifacts/ea4e6b34-ec5c-4e86-804f-a9204ce6dae4_pstack-hardest_0_meta.json"
+        },
+        {
+          "agent": "pstack-bug-fix",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 154,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-4__roster/subagent-artifacts/2e36c7dd-8ce5-4588-8bcd-138d179e4c7c_pstack-bug-fix_0_meta.json"
+        },
+        {
+          "agent": "pstack-comment-sicko",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 46,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-4__roster/subagent-artifacts/ab0aad40-7fb8-4b3c-9333-c3639768413e_pstack-comment-sicko_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-5__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 711,
+      "children": [
+        {
+          "agent": "pstack-how-critics-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 57,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-5__roster/subagent-artifacts/b12a2f84-2434-4859-a13d-65d117c09f45_pstack-how-critics-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-hillclimb",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 150,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-5__roster/subagent-artifacts/c3cbaaeb-7fc6-4e1b-a216-0c4b52be7028_pstack-hillclimb_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-critics-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 852,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-5__roster/subagent-artifacts/eec45447-cc90-4cd8-a54e-cda968e74261_pstack-how-critics-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-critics-3",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 160,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-5__roster/subagent-artifacts/cb985524-591a-42ff-8a2a-d954c11bf9ea_pstack-how-critics-3_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-6__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 738,
+      "children": [
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1796,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-6__roster/subagent-artifacts/af1f65ad-e566-4dc3-b506-bad4e7e8a305_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-critics-4",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 196,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-6__roster/subagent-artifacts/2df88fb1-df30-4455-b3a4-683fc3efa9c7_pstack-how-critics-4_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 45,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-6__roster/subagent-artifacts/50e0b962-ad1b-4bd1-a2b4-f488a88eaada_pstack-how-explainer_0_meta.json"
+        },
+        {
+          "agent": "pstack-interrogate-reviewers-1",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 69,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-6__roster/subagent-artifacts/93227faa-614a-4dad-9609-226690eec948_pstack-interrogate-reviewers-1_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-7__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 694,
+      "children": [
+        {
+          "agent": "pstack-interrogate-reviewers-2",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 132,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-7__roster/subagent-artifacts/70502d13-ec0f-4f8d-bda5-187a3f90e3a2_pstack-interrogate-reviewers-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-judgment-prose",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 180,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-7__roster/subagent-artifacts/a7be56ca-5b0c-40ea-8e13-a7101a2509df_pstack-judgment-prose_0_meta.json"
+        },
+        {
+          "agent": "pstack-interrogate-reviewers-4",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 10751,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-7__roster/subagent-artifacts/7e8b8f71-e917-4613-b785-e4c82dd56ea9_pstack-interrogate-reviewers-4_0_meta.json"
+        },
+        {
+          "agent": "pstack-interrogate-reviewers-3",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 58,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-7__roster/subagent-artifacts/da4e020b-e897-4acc-ba7c-19b19d5fd8eb_pstack-interrogate-reviewers-3_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-8__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 733,
+      "children": [
+        {
+          "agent": "pstack-refactoring",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 43,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-8__roster/subagent-artifacts/79218bf4-edaa-4ae2-b39b-9079f768fcc0_pstack-refactoring_0_meta.json"
+        },
+        {
+          "agent": "pstack-reflect-divergent",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 137,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-8__roster/subagent-artifacts/6d537e43-7d7f-4805-a63e-62b084131fb9_pstack-reflect-divergent_0_meta.json"
+        },
+        {
+          "agent": "pstack-reflect-judgment",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 6,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-8__roster/subagent-artifacts/f26ac159-4cca-4124-902c-8e1a0aa71ad0_pstack-reflect-judgment_0_meta.json"
+        },
+        {
+          "agent": "pstack-perf-issue",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 195,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-8__roster/subagent-artifacts/a3d92bca-d3cf-4790-ab67-9d8a19390ebf_pstack-perf-issue_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-9__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 796,
+      "children": [
+        {
+          "agent": "pstack-reflect-synthesizer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 20,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-9__roster/subagent-artifacts/44ce729a-8ff8-467e-9138-8da2fc6e77f6_pstack-reflect-synthesizer_0_meta.json"
+        },
+        {
+          "agent": "pstack-why-investigator",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 17,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-9__roster/subagent-artifacts/4450c56e-dab8-4783-9d34-cacf61e2890f_pstack-why-investigator_0_meta.json"
+        },
+        {
+          "agent": "pstack-reflect-tooling",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 8,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-9__roster/subagent-artifacts/5049c2d3-8b03-4088-b46c-2a5b1ffc1d65_pstack-reflect-tooling_0_meta.json"
+        },
+        {
+          "agent": "pstack-swarm-worker",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 9,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-9__roster/subagent-artifacts/21b9d190-83ef-47dd-9a8e-99f4332cf6bc_pstack-swarm-worker_0_meta.json"
+        }
+      ]
+    },
+    {
+      "case": "roles-10__roster",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 432,
+      "children": [
+        {
+          "agent": "pstack-why-synthesizer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 6,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/roles-10__roster/subagent-artifacts/b7cdbcd9-d0d3-4ff9-ac6b-280d727f9006_pstack-why-synthesizer_0_meta.json"
+        }
+      ]
+    }
+  ],
+  "automatedTests": {
+    "bun": 82,
+    "python": 5
+  },
+  "selectedSkillChildCalls": 54,
+  "selectedRoleChildCalls": 37,
+  "packagedCases": [
+    {
+      "skill": "setup-pstack",
+      "case": "setup-pstack__packaged",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 3821,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/setup-pstack__packaged",
+      "transcriptSha256": "1516311350d51a65dca0390e43f74ce6afc1c1d94a1faa6ebd32011b1b7af4be",
+      "children": [
+        {
+          "agent": "pstack-how-explorer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 7,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/setup-pstack__packaged/subagent-artifacts/87018e8d-4cad-4fbe-9322-736705765ee4_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 240,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/setup-pstack__packaged/subagent-artifacts/f3031e55-636d-4f5e-9b2f-2a88ab010757_pstack-how-explorer_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explorer",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 17,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/setup-pstack__packaged/subagent-artifacts/87823d96-ff02-4a49-a1fa-95a450abaad2_pstack-how-explorer_0_meta.json"
+        }
+      ]
+    },
+    {
+      "skill": "create-verification-skill",
+      "case": "create-verification-skill__packaged",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 6746,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/create-verification-skill__packaged",
+      "transcriptSha256": "6d352a488faa9b02035cb428cd34f4437e4fddc977725307c20dbd8e04a815e4",
+      "children": []
+    },
+    {
+      "skill": "poteto-mode",
+      "case": "poteto-mode__packaged",
+      "status": "PASS",
+      "parentModels": [
+        "openai-codex/gpt-5.6-sol"
+      ],
+      "parentOutputTokens": 7549,
+      "evidenceDirectory": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/poteto-mode__packaged",
+      "transcriptSha256": "157dc78bb0197cfcaa006eae803a4b87b475d9419bf3d6d14c2dec371623b697",
+      "children": [
+        {
+          "agent": "pstack-why-investigator",
+          "model": "opencode-go/glm-5.3-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1076,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/poteto-mode__packaged/subagent-artifacts/96b4c605-9a43-42b3-ba42-ecd50655eeab_pstack-why-investigator_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 7663,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/poteto-mode__packaged/subagent-artifacts/016a5c0a-d12e-4c2c-84fa-74e1f02b2fd2_pstack-architect-runners-2_0_meta.json"
+        },
+        {
+          "agent": "pstack-how-explainer",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1020,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/poteto-mode__packaged/subagent-artifacts/b13cbc7c-bbaf-45ea-af24-fbeb928612de_pstack-how-explainer_0_meta.json"
+        },
+        {
+          "agent": "pstack-bug-fix",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 2565,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/poteto-mode__packaged/subagent-artifacts/bbe25e31-8b66-45fc-b757-375aeae18085_pstack-bug-fix_0_meta.json"
+        },
+        {
+          "agent": "pstack-architect-runners-1",
+          "model": "openai-codex/gpt-5.6-sol:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 1290,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/poteto-mode__packaged/subagent-artifacts/fa03aa69-9568-4449-beb7-12f98802f46f_pstack-architect-runners-1_0_meta.json"
+        },
+        {
+          "agent": "pstack-arena-cross-judges-2",
+          "model": "opencode-go/deepseek-v4-flash:low",
+          "exitCode": 0,
+          "called": true,
+          "outputTokens": 12270,
+          "metadata": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/packed-check/cases/poteto-mode__packaged/subagent-artifacts/103ecf04-4fca-4913-a69a-f992048c1a9e_pstack-arena-cross-judges-2_0_meta.json"
+        }
+      ]
+    }
+  ],
+  "packagedChildCalls": 9,
+  "generatedVerificationCompletionEvidence": "/var/folders/90/_hhwqwlx6ws2m1mfgr8b64100000gn/T/poteto-audit-_rqtwb57/cases/poteto-mode__integrated/evidence/verify-notes-completion/PASS.txt"
+}

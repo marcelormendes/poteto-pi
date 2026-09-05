@@ -181,6 +181,26 @@ afterEach(async () => {
 });
 
 describe("Store", () => {
+  it("counts arbitrary state names without inheriting object properties", async () => {
+    const { store } = await initializedStore();
+    await store.units.add({ id: "u1", track: "build" });
+    await store.units.set({ id: "u1", state: "constructor" });
+    expect(await store.units.counts()).toEqual({ constructor: 1 });
+    await store.units.set({ id: "u1", state: "__proto__" });
+    expect(Object.entries(await store.units.counts())).toEqual([["__proto__", 1]]);
+  });
+
+  it("an old store cannot write or release a replacement lock in the same process", async () => {
+    const { store, directory } = await initializedStore();
+    const replacement = useStore(directory, { force: true });
+    await replacement.units.add({ id: "replacement", track: "build" });
+    await expect(store.units.add({ id: "stale", track: "build" })).rejects.toThrow("lock ownership lost");
+    await store.close();
+    expect(await readdir(directory)).toContain(".orch.lock");
+    await replacement.close();
+    expect(await readdir(directory)).not.toContain(".orch.lock");
+  });
+
   it("initializes an idempotent plain-file store and releases its lock", async () => {
     const directory = await makeDirectory();
     const store = useStore(directory);

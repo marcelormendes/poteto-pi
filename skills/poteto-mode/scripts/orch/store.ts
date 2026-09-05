@@ -381,12 +381,13 @@ function holderIsDead(holder: string): boolean {
 async function acquireLock(
   store: string,
   options: OpenStoreOptions
-): Promise<() => Promise<void>> {
+): Promise<{ release: () => Promise<void>; assertOwned: () => Promise<void> }> {
   const path = join(store, LOCK_FILE);
   const pid = String(process.pid);
+  const token = `${pid} ${randomUUID()}`;
   const create = async (): Promise<void> => {
     const handle = await open(path, "wx");
-    await handle.writeFile(`${pid}\n`);
+    await handle.writeFile(`${token}\n`);
     await handle.close();
   };
 
@@ -397,7 +398,7 @@ async function acquireLock(
     } catch (retryError) {
       if (errorCode(retryError) === "EEXIST") {
         const retryHolder =
-          (await readFile(path, "utf8")).trim() || "unknown";
+          (await readFile(path, "utf8")).trim().split(" ")[0] || "unknown";
         throw new UserError(`store lock held by pid ${retryHolder}`);
       }
       throw retryError;
@@ -412,7 +413,7 @@ async function acquireLock(
     }
     let holder = "unknown";
     try {
-      holder = (await readFile(path, "utf8")).trim() || "unknown";
+      holder = (await readFile(path, "utf8")).trim().split(" ")[0] || "unknown";
     } catch {
       holder = "unknown";
     }
@@ -427,16 +428,18 @@ async function acquireLock(
     }
   }
 
-  return async (): Promise<void> => {
-    try {
-      if ((await readFile(path, "utf8")).trim() === pid) {
-        await unlink(path);
+  return {
+    assertOwned: async () => {
+      const owner = await readFile(path, "utf8").catch(() => "");
+      if (owner.trim() !== token) throw new UserError("store lock ownership lost; reopen the store");
+    },
+    release: async () => {
+      try {
+        if ((await readFile(path, "utf8")).trim() === token) await unlink(path);
+      } catch (error) {
+        if (errorCode(error) !== "ENOENT") throw error;
       }
-    } catch (error) {
-      if (errorCode(error) !== "ENOENT") {
-        throw error;
-      }
-    }
+    },
   };
 }
 
@@ -750,7 +753,7 @@ async function readStanding(
 }
 
 function countValues(values: readonly string[]): Counts {
-  const result: Record<string, number> = {};
+  const result: Record<string, number> = Object.create(null);
   for (const value of values) {
     result[value] = (result[value] ?? 0) + 1;
   }
@@ -782,7 +785,7 @@ function countRecord(value: unknown): Record<string, number> | null {
   if (!isRecord(value)) {
     return null;
   }
-  const result: Record<string, number> = {};
+  const result: Record<string, number> = Object.create(null);
   for (const [name, count] of Object.entries(value)) {
     if (
       typeof count !== "number" ||
@@ -1204,6 +1207,7 @@ export function openStore(
   const store = resolve(directory);
   let closed = false;
   let releaseLock: (() => Promise<void>) | null = null;
+  let assertLockOwned: (() => Promise<void>) | null = null;
   let lockRequest: Promise<void> | null = null;
 
   const ensureOpen = (): void => {
@@ -1214,12 +1218,14 @@ export function openStore(
 
   const ensureLock = async (): Promise<void> => {
     ensureOpen();
-    if (releaseLock !== null) {
+    if (assertLockOwned !== null) {
+      await assertLockOwned();
       return;
     }
     if (lockRequest === null) {
-      lockRequest = acquireLock(store, options).then((release) => {
-        releaseLock = release;
+      lockRequest = acquireLock(store, options).then((lock) => {
+        releaseLock = lock.release;
+        assertLockOwned = lock.assertOwned;
       });
     }
     try {

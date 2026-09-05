@@ -64,7 +64,7 @@ Fix the log, not the story. If the work diverged from what a row claims, the row
 
 ## Cross-model review of the trail
 
-Before handing back, you must run a review pass on a different model family from the one that did the work. Self-review is not a substitute; the point is fresh eyes you cannot bring yourself. PI runs one session at a time, so this is a sequential pass: switch the session model (`pi --model provider/id` at launch, or Ctrl+P to cycle; ask the user to switch if out of reach), record which model the pass ran under, and run the review from this brief.
+Before handing back, you must run a review pass on a different model family from the one that did the work. Self-review is not a substitute; the point is fresh eyes you cannot bring yourself. Launch a fresh `pstack-judgment-prose` subagent with an explicit contrasting model from the configured panel. Give it this brief and the log path; record the actual child model. If delegation is unavailable, report the loss of independent review and use a separate session on that model.
 
 The pass reads the audit trail and the run's transcript, then flags what the user should pay attention to. Not a redo of the work, a scan for what's suboptimal or risky.
 

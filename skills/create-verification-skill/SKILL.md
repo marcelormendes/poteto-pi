@@ -29,6 +29,7 @@ Write `.pi/skills/verify-<app>/SKILL.md` with YAML frontmatter (`name: verify-<a
 - **Drive:** the harness recipe with real selectors/commands from this repo, not examples. Prefer stable handles (ARIA labels, data attributes, prompt strings, route paths) over coordinates and tab order.
 - **Evidence:** what to capture for a proof and where it goes. State the proof standards: exercise the real user path, not internal setters or test-only endpoints; capture the action and the resulting state, not just the final screen; verify side effects (files written, rows inserted, messages sent) alongside what's visible; mocks only where a production boundary already isolates the external system. When the safe path is a dry-run or test mode, verify what it actually skips by observing (files, network, git refs) rather than trusting its name: some dry-runs still touch the network or open a browser.
 - **Cleanup:** how to tear down instances the run created. Never kill by process name; kill what you started. Cleanup removes instances and scratch state, never the evidence: proof artifacts survive the teardown, in a location the skill names.
+- **Scratch ownership:** prefer one driver invocation that allocates scratch with `mktemp -d` and traps cleanup of that exact returned directory. Never recursively delete a scratch path supplied through an argument or environment variable, including during drive/startup. Prefix checks alone do not establish ownership. Keep evidence outside scratch and refuse an existing evidence directory so an old PASS file cannot survive a failed rerun.
 - **Helpers:** any script the skill ships is executable and its invocation is shown in the skill body. A helper the reader has to reverse-engineer is not a helper.
 
 ## 3. Seed the feature map
@@ -38,6 +39,10 @@ Create `.pi/skills/verify-<app>/features/README.md` plus one file per user-facin
 ## 4. Prove the generated skill before handing it over
 
 Run its own instructions end to end once: launch, doctor, drive ONE mapped feature (one is enough; the map exists so later runs can cover the rest), capture evidence, clean up. After cleanup, confirm the evidence still exists at the named location — a cleanup that eats the proof fails this step. Fix what fails, and run the generated cleanup after every failed iteration too, so broken attempts don't strand processes and ports. A generated skill that was never executed is a draft, not a deliverable.
+
+If the helper accepts scratch or output overrides, use a disposable directory
+with a canary to verify it cannot delete pre-existing data. Repeat a run's
+evidence path and confirm it is rejected rather than reusing a stale verdict.
 
 ## 5. Offer the maintenance loop
 

@@ -1,143 +1,157 @@
-import { readdir, readFile, stat } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { readdir, stat } from "node:fs/promises";
 import { homedir } from "node:os";
-import { join, resolve } from "node:path";
+import { basename, join, resolve } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 
-const agentDir = (): string =>
-  process.env.PI_CODING_AGENT_DIR ?? join(homedir(), ".pi", "agent");
-
-const sessionRoot = (): string =>
-  process.env.PI_CODING_AGENT_SESSION_DIR ?? join(agentDir(), "sessions");
-
+const MAX_SCAN_BYTES = 32 * 1024 * 1024;
+const MAX_LINE_BYTES = 1024 * 1024;
+const MARKER = "\n[truncated]\n";
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
-const entryText = (entry: Record<string, unknown>): string => {
-  const message = entry.message;
-  if (!isRecord(message)) return "";
-  const content = message.content;
+const sessionRoot = (): string => process.env.PI_CODING_AGENT_SESSION_DIR ??
+  join(process.env.PI_CODING_AGENT_DIR ?? join(homedir(), ".pi", "agent"), "sessions");
+
+interface Budget { remaining: number; truncated: boolean }
+
+async function* readEntries(path: string, budget: Budget, signal?: AbortSignal) {
+  let pending = Buffer.alloc(0);
+  const stream = createReadStream(path, { highWaterMark: 16 * 1024, signal });
+  try {
+    for await (const chunk of stream) {
+      budget.remaining -= chunk.length;
+      if (budget.remaining < 0) { budget.truncated = true; return; }
+      pending = Buffer.concat([pending, chunk]);
+      let end: number;
+      while ((end = pending.indexOf(10)) >= 0) {
+        const line = pending.subarray(0, end).toString("utf8");
+        pending = pending.subarray(end + 1);
+        try {
+          const entry: unknown = JSON.parse(line);
+          if (isRecord(entry)) yield entry;
+        } catch { /* A crashed session can leave an incomplete entry. */ }
+      }
+      if (pending.length > MAX_LINE_BYTES) { budget.truncated = true; return; }
+    }
+    if (pending.length) {
+      try {
+        const entry: unknown = JSON.parse(pending.toString("utf8"));
+        if (isRecord(entry)) yield entry;
+      } catch { /* Ignore an incomplete trailing entry. */ }
+    }
+  } finally {
+    stream.destroy();
+  }
+}
+
+async function sessionFiles() {
+  const root = sessionRoot();
+  const files: { file: string; modified: number }[] = [];
+  const add = async (dir: string) => {
+    for (const entry of await readdir(dir, { withFileTypes: true }).catch(() => [])) {
+      if (!entry.isFile() || !entry.name.endsWith(".jsonl")) continue;
+      const file = join(dir, entry.name);
+      const info = await stat(file).catch(() => undefined);
+      if (info) files.push({ file, modified: info.mtimeMs });
+    }
+  };
+  await add(root);
+  for (const entry of await readdir(root, { withFileTypes: true }).catch(() => [])) {
+    if (entry.isDirectory()) await add(join(root, entry.name));
+  }
+  return files.sort((a, b) => b.modified - a.modified || a.file.localeCompare(b.file));
+}
+
+function entryText(entry: Record<string, unknown>): string {
+  if (!isRecord(entry.message)) return "";
+  const content = entry.message.content;
   if (typeof content === "string") return content;
   if (!Array.isArray(content)) return "";
-  return content
-    .flatMap((part) =>
-      isRecord(part) && part.type === "text" && typeof part.text === "string" ? [part.text] : [],
-    )
-    .join("\n");
-};
+  return content.flatMap((part) => isRecord(part) && part.type === "text" && typeof part.text === "string" ? [part.text] : []).join("\n");
+}
 
-const readEntries = async (path: string): Promise<Record<string, unknown>[]> => {
-  const lines = (await readFile(path, "utf8")).split("\n");
-  const entries: Record<string, unknown>[] = [];
+const bounded = (value: number | undefined, fallback: number, max: number): number =>
+  value === undefined || !Number.isFinite(value) ? fallback : Math.min(max, Math.max(1, Math.floor(value)));
+const textResult = (text: string) => ({ content: [{ type: "text" as const, text }], details: {} });
+
+function boundedLines(lines: string[], maxBytes: number, truncated: boolean): string {
+  const kept: string[] = [];
+  let bytes = 0;
   for (const line of lines) {
-    if (line.trim() === "") continue;
-    try {
-      const value: unknown = JSON.parse(line);
-      if (isRecord(value)) entries.push(value);
-    } catch {
-      continue;
-    }
+    const size = Buffer.byteLength(line) + (kept.length ? 1 : 0);
+    if (bytes + size > maxBytes - Buffer.byteLength(MARKER)) { truncated = true; break; }
+    kept.push(line);
+    bytes += size;
   }
-  return entries;
-};
-
-const sessionFiles = async (): Promise<string[]> => {
-  const root = sessionRoot();
-  const projects = await readdir(root).catch(() => []);
-  const files: string[] = [];
-  for (const project of projects) {
-    const dir = join(root, project);
-    if (!(await stat(dir).then((info) => info.isDirectory()).catch(() => false))) continue;
-    for (const file of await readdir(dir).catch(() => [] as string[])) {
-      if (file.endsWith(".jsonl")) files.push(join(dir, file));
-    }
-  }
-  return files.sort();
-};
-
-const textResult = (text: string) => ({
-  content: [{ type: "text" as const, text }],
-  details: {},
-});
+  return kept.join("\n") + (truncated ? MARKER : "");
+}
 
 export function registerTranscriptTool(pi: ExtensionAPI): void {
   pi.registerTool({
     name: "pstack_transcripts",
     label: "Pstack transcripts",
-    description:
-      "List, read, or search current-project PI session transcripts with bounds. " +
-      "Defaults to the current project; pass an explicit projectPath only when " +
-      "the user authorizes another project.",
+    description: "List, read, or search current-project Pi transcripts, newest first, with byte and result bounds. Use projectPath only for another project the user authorized. Read supports offset pagination.",
     parameters: Type.Object({
       operation: Type.Union([Type.Literal("list"), Type.Literal("read"), Type.Literal("search")]),
-      sessionId: Type.Optional(Type.String({ description: "Session id prefix or filename" })),
-      query: Type.Optional(Type.String({ description: "Literal substring for search" })),
-      limit: Type.Optional(Type.Number({ description: "Max sessions or matches (default 10)" })),
-      maxBytes: Type.Optional(Type.Number({ description: "Max bytes for read (default 65536)" })),
-      projectPath: Type.Optional(Type.String({ description: "Authorized non-current project path" })),
+      sessionId: Type.Optional(Type.String({ minLength: 1 })),
+      query: Type.Optional(Type.String({ minLength: 1 })),
+      limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 500 })),
+      maxBytes: Type.Optional(Type.Integer({ minimum: 64, maximum: 1048576 })),
+      offset: Type.Optional(Type.Integer({ minimum: 0 })),
+      projectPath: Type.Optional(Type.String({ minLength: 1 })),
     }),
-    async execute(_toolCallId, params, _signal, _onUpdate, ctx: ExtensionContext) {
-      const scope = params.projectPath ? resolve(params.projectPath) : ctx.cwd;
-      const files = await sessionFiles();
-      const inScope: { file: string; entries: Record<string, unknown>[] }[] = [];
-      for (const file of files) {
-        const entries = await readEntries(file).catch(() => []);
-        const header = entries.find((entry) => entry.type === "session");
-        const cwd = typeof header?.cwd === "string" ? header.cwd : "";
-        if (!params.projectPath && cwd !== "" && resolve(cwd) !== resolve(scope)) continue;
-        inScope.push({ file, entries });
+    async execute(_toolCallId, params, signal, _onUpdate, ctx: ExtensionContext) {
+      const scope = resolve(ctx.cwd, params.projectPath ?? ".");
+      const maxBytes = Math.max(64, bounded(params.maxBytes, 65536, 1048576));
+      const budget: Budget = { remaining: MAX_SCAN_BYTES, truncated: false };
+      const sessions: { file: string; header: Record<string, unknown> }[] = [];
+      for (const { file } of await sessionFiles()) {
+        if (budget.remaining <= 0) { budget.truncated = true; break; }
+        try {
+          for await (const header of readEntries(file, budget, signal)) {
+            if (header.type === "session" && typeof header.cwd === "string" && resolve(header.cwd) === scope) sessions.push({ file, header });
+            break;
+          }
+        } catch (error) { if (signal?.aborted) throw error; }
+        if (params.operation === "list" && sessions.length >= bounded(params.limit, 10, 500)) break;
       }
       if (params.operation === "list") {
-        const limit = params.limit ?? 10;
-        const rows = inScope.slice(-limit).map(({ file, entries }) => {
-          const header = entries.find((entry) => entry.type === "session");
-          const messages = entries.filter((entry) => entry.type === "message").length;
-          return JSON.stringify({
-            sessionId: typeof header?.id === "string" ? header.id : file,
-            cwd: header?.cwd ?? "",
-            timestamp: header?.timestamp ?? "",
-            messages,
-            file,
-          });
-        });
-        return textResult(rows.join("\n") || "(no sessions in scope)");
+        const lines = sessions.map(({ file, header }) => JSON.stringify({ sessionId: header.id, cwd: header.cwd, timestamp: header.timestamp, file }));
+        return textResult(boundedLines(lines.length ? lines : ["(no sessions in scope)"], maxBytes, budget.truncated));
       }
       if (params.operation === "read") {
         if (!params.sessionId) return textResult("read requires sessionId");
-        const match = inScope.find(
-          ({ file, entries }) =>
-            file.includes(params.sessionId as string) ||
-            entries.some((entry) => entry.type === "session" && String(entry.id).startsWith(params.sessionId as string)),
-        );
-        if (!match) return textResult(`session not found in scope: ${params.sessionId}`);
-        const maxBytes = params.maxBytes ?? 65536;
-        const limit = params.limit ?? 200;
-        const picked = match.entries.slice(0, limit);
-        let out = "";
-        for (const entry of picked) {
-          const line = JSON.stringify(entry);
-          if (out.length + line.length + 1 > maxBytes) {
-            out += `\n[truncated at ${maxBytes} bytes]`;
-            break;
-          }
-          out += `${line}\n`;
+        const exact = sessions.filter(({ file, header }) => header.id === params.sessionId || basename(file) === params.sessionId);
+        const matches = exact.length ? exact : sessions.filter(({ header }) => typeof header.id === "string" && header.id.startsWith(params.sessionId!));
+        if (matches.length > 1) return textResult("ambiguous session id; use the full id from list");
+        if (!matches[0]) return textResult(`session not found in scope: ${params.sessionId}`);
+        const limit = bounded(params.limit, 200, 500);
+        let out = "", bytes = 0, index = 0, count = 0;
+        for await (const entry of readEntries(matches[0].file, budget, signal)) {
+          if (index++ < (params.offset ?? 0)) continue;
+          const line = JSON.stringify(entry) + "\n";
+          const size = Buffer.byteLength(line);
+          if (count++ >= limit || bytes + size > maxBytes - Buffer.byteLength(MARKER)) { budget.truncated = true; break; }
+          out += line;
+          bytes += size;
         }
-        return textResult(out || "(empty session)");
+        return textResult((out || "(empty session)") + (budget.truncated ? MARKER : ""));
       }
       if (!params.query) return textResult("search requires query");
-      const limit = params.limit ?? 20;
       const hits: string[] = [];
-      for (const { file, entries } of inScope) {
-        for (const entry of entries) {
-          if (hits.length >= limit) break;
+      const limit = bounded(params.limit, 20, 500);
+      for (const { file } of sessions) {
+        for await (const entry of readEntries(file, budget, signal)) {
           const text = entryText(entry);
-          if (text.includes(params.query)) {
-            hits.push(JSON.stringify({ file, id: entry.id ?? "", excerpt: text.slice(0, 300) }));
-          }
+          const at = text.indexOf(params.query);
+          if (at >= 0) hits.push(JSON.stringify({ file, id: entry.id ?? "", excerpt: text.slice(Math.max(0, at - 80), at + 220) }));
+          if (hits.length >= limit) break;
         }
-        if (hits.length >= limit) break;
+        if (hits.length >= limit || budget.truncated) break;
       }
-      return textResult(hits.join("\n") || "(no matches)");
+      return textResult(boundedLines(hits.length ? hits : ["(no matches)"], maxBytes, budget.truncated));
     },
   });
 }

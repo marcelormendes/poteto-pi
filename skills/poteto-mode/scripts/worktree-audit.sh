@@ -12,24 +12,24 @@ repo="${1:-$(git rev-parse --show-toplevel 2>/dev/null)}"
 cd "$repo" || exit 1
 
 # Main worktree is the first entry; everything else is a candidate.
-main_wt=$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')
+main_wt=$(git -c core.quotePath=false worktree list --porcelain | sed -n 's/^worktree //p' | head -1)
 
-# origin/main drives the merge check. Best-effort; stale is fine for a first pass.
-git fetch origin main --quiet 2>/dev/null || echo "warn: could not fetch origin/main; merged column may be stale" >&2
+# Use existing refs; the audit does not fetch or change repository state.
 
 # PR state by branch, fetched once. Empty if gh is unavailable.
 prs=$(mktemp)
+trap 'rm -f "$prs"' EXIT
 gh pr list --author "@me" --state all --limit 1000 \
 	--json number,state,headRefName 2>/dev/null > "$prs" || echo "[]" > "$prs"
 
 # Session transcripts dir: PI session trees below ~/.pi/agent/sessions,
 # one dir per project with one .jsonl per session. Override via PSTACK_TRANSCRIPTS_DIR.
-transcripts="${PSTACK_TRANSCRIPTS_DIR:-$HOME/.pi/agent/sessions}"
+transcripts="${PSTACK_TRANSCRIPTS_DIR:-${PI_CODING_AGENT_SESSION_DIR:-${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/sessions}}"
 now=$(date +%s)
 
 printf "SIZE\tAGE\tMERGED\tDIRTY\tREMOTE\tPR\tLAST_SESSION\tBUCKET\tWORKTREE\n"
 
-git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt; do
+git -c core.quotePath=false worktree list --porcelain | sed -n 's/^worktree //p' | while IFS= read -r wt; do
 	[ "$wt" = "$main_wt" ] && continue
 
 	size=$(du -sh "$wt" 2>/dev/null | awk '{print $1}')
@@ -41,8 +41,8 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 	# real signal; merge-base only catches fast-forward/rebase merges.
 	git merge-base --is-ancestor "$head" origin/main 2>/dev/null && merged=YES || merged=no
 
-	# Distinguish real WIP (tracked edits) from disposable untracked scratch.
-	porcelain=$(git -C "$wt" status --porcelain 2>/dev/null)
+	# Both tracked edits and untracked files prevent a prune recommendation.
+	porcelain=$(git -C "$wt" status --porcelain 2>/dev/null) || porcelain="?? [unreadable worktree]"
 	if [ -z "$porcelain" ]; then dirty=clean
 	elif printf '%s\n' "$porcelain" | grep -qv '^??'; then
 		dirty="wip:$(printf '%s\n' "$porcelain" | grep -cv '^??')"
@@ -60,21 +60,34 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 		'.[] | select(.headRefName==$b) | "#\(.number)/\(.state)"' "$prs" 2>/dev/null | head -1)
 	[ -z "$pr" ] && pr="-"
 
-	# Most recent session whose transcript operated in this worktree. Match
-	# path followed by "/" or a quote so glint-482 does not match glint-482-r37.
+	# Match the session header's exact project path, without reading history.
 	last="-"; last_ts=0
 	if [ -d "$transcripts" ]; then
-		f=$(rg -l -e "${wt}/" -e "${wt}\"" "$transcripts" 2>/dev/null \
-			| xargs stat -f '%m %N' 2>/dev/null | sort -rn | head -1)
-		if [ -n "$f" ]; then last_ts=$(echo "$f" | awk '{print $1}')
-			last=$(date -r "$last_ts" '+%Y-%m-%d' 2>/dev/null); fi
+		last_ts=$(python3 - "$transcripts" "$wt" <<'PY'
+import json, os, pathlib, sys
+root, worktree = pathlib.Path(sys.argv[1]), os.path.realpath(sys.argv[2])
+latest = 0
+for file in list(root.glob('*.jsonl')) + list(root.glob('*/*.jsonl')):
+    try:
+        with file.open() as stream:
+            header = json.loads(stream.readline(65536))
+        if header.get('type') == 'session' and header.get('cwd') and os.path.realpath(header['cwd']) == worktree:
+            latest = max(latest, int(file.stat().st_mtime))
+    except (OSError, ValueError):
+        pass
+print(latest)
+PY
+)
+		if [ "$last_ts" -gt 0 ]; then
+			last=$(python3 -c 'import datetime,sys; print(datetime.datetime.fromtimestamp(int(sys.argv[1])).date())' "$last_ts")
+		fi
 	fi
 	recent=$([ "$last_ts" -gt 0 ] 2>/dev/null && [ $(( (now - last_ts) / 86400 )) -le 4 ] && echo yes || echo no)
 
-	case "$dirty" in wip:*) bucket=hold-wip ;; *)
+	case "$dirty" in wip:*) bucket=hold-wip ;; scratch:*) bucket=hold-untracked ;; *)
 		case "$pr" in *OPEN*) bucket=hold-open-pr ;; *)
 			if [ "$recent" = yes ]; then bucket=verify-recent-session
-			elif [ "$merged" = YES ] || [ "$pr" != "-" ]; then bucket=safe
+			elif [ "$merged" = YES ] || [[ "$pr" == */MERGED ]]; then bucket=verify-merged
 			else bucket=review; fi ;;
 		esac ;;
 	esac
@@ -82,5 +95,3 @@ git worktree list --porcelain | awk '/^worktree /{print $2}' | while read -r wt;
 	printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
 		"$size" "$age" "$merged" "$dirty" "$remote" "$pr" "$last" "$bucket" "$wt"
 done | sort -t$'\t' -k1,1 -rh
-
-rm -f "$prs"

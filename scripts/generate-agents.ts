@@ -19,16 +19,16 @@ const SECOND = "openai-codex/gpt-5.6-sol";
 const VISION = "opencode-go/deepseek-v4-flash-vision-exp";
 const READONLY = ["read", "grep", "find", "ls"];
 
-const PANEL: Role[] = [];
-const panelSeats: ReadonlyArray<{ suffix: string; model: string; thinking: Role["thinking"]; tools?: string[]; job: string }> = [
-  { suffix: "1", model: JUDGE, thinking: "high", job: "" },
-  { suffix: "2", model: VISION, thinking: "high", job: "" },
-  { suffix: "3", model: JUDGE, thinking: "medium", job: "" },
-  { suffix: "4", model: FAST, thinking: "medium", job: "" },
+const panelSeats: ReadonlyArray<{ suffix: string; model: string; thinking: Role["thinking"] }> = [
+  { suffix: "1", model: JUDGE, thinking: "high" },
+  { suffix: "2", model: VISION, thinking: "high" },
+  { suffix: "3", model: JUDGE, thinking: "medium" },
+  { suffix: "4", model: FAST, thinking: "medium" },
 ];
 
 const scalars: Role[] = [
-  { name: "pstack-feature", description: "Pstack feature role: implement a complete behavior slice with tests", model: FAST, thinking: "medium", prompt: "Implement the assigned behavior slice completely with focused tests. Read skill://how first when the subsystem is unfamiliar. Verify against the real surface and report evidence." },
+  { name: "pstack-feature", description: "Pstack feature role: implement a complete behavior slice with tests", model: FAST, thinking: "medium", prompt: "Implement the assigned behavior slice completely with focused tests. Read the how skill's SKILL.md when the subsystem is unfamiliar. Verify against the real surface and report evidence." },
+  { name: "pstack-comment-sicko", description: "Pstack Comment Sicko: independent review of comments and workaround code", model: JUDGE, thinking: "high", tools: READONLY, prompt: "Apply the no-comments skill checklist provided in the brief to the declared scope. Return proposed comment deletions, exact MUST KILL symbols with evidence, protected exceptions, and unresolved constraints. Do not edit files; the parent reviews and applies accepted findings." },
   { name: "pstack-refactoring", description: "Pstack refactoring role: behavior-preserving structural change", model: FAST, thinking: "medium", prompt: "Make the assigned behavior-preserving structural change. Pin behavior before edits, migrate callers, delete legacy paths in the same wave. Verify with the focused suite." },
   { name: "pstack-bug-fix", description: "Pstack bug-fix role: reproduce, root-cause, fix with runtime evidence", model: JUDGE, thinking: "high", prompt: "Reproduce the defect on the real surface first, trace to the root cause, fix there, keep a regression test. Never ship a speculative guard." },
   { name: "pstack-perf-issue", description: "Pstack perf role: trace measured slowness against a baseline", model: JUDGE, thinking: "high", prompt: "Capture the baseline number and trace first, then make one targeted change and re-measure. Report before/after with the sampling method." },
@@ -70,16 +70,20 @@ for (const panel of panels) {
 
 await mkdir(dir, { recursive: true });
 for (const role of roles) {
+  const readOnly = role.tools === READONLY || /^pstack-(why-|reflect-)/.test(role.name);
   const frontmatter = [
     "---",
     `name: ${role.name}`,
     `description: ${JSON.stringify(role.description)}`,
     `model: ${role.model}`,
     `thinking: ${role.thinking}`,
-    ...(role.tools ? [`tools: [${role.tools.join(", ")}]`] : []),
+    ...(role.tools ? [`tools: ${role.tools.join(", ")}`] : []),
+    ...(readOnly ? ["acceptanceRole: read-only", "completionGuard: false"] : []),
     "---",
     "",
-    role.prompt,
+    role.prompt
+      + (readOnly ? " Return the report as your final response; the runtime saves any configured output file." : "")
+      + (role.tools === READONLY ? " Your tools are read-only. If a claim needs a command you cannot run, return the proposed check and evidence gap for the parent to verify. Do not wait for additional tool access." : ""),
     "",
   ].join("\n");
   await writeFile(join(dir, `${role.name}.md`), frontmatter);

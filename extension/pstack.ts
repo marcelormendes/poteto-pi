@@ -1,7 +1,9 @@
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
-import { join } from "node:path";
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { Type } from "typebox";
 import { registerTodoTool } from "./todo";
 import { registerTranscriptTool } from "./transcripts";
 import { registerMemoryTool } from "./memory";
@@ -12,13 +14,13 @@ const MODE_ENTRY = "dev.poteto-pi.mode";
 const ROUTER_ENTRY = "dev.poteto-pi.router";
 
 const REMINDER =
-  "Pstack mode is on. Route the goal to the narrowest specialist skill, then invoke it via /skill:name. Panels run as numbered subagent passes; verify against the real surface.";
+  "Pstack mode is on. Read the relevant installed SKILL.md before following it. Use fresh subagents for panels and verify against the real surface. Simple requests need no workflow.";
 
 const FULL_ROUTER = `# Pstack routing contract (PI edition)
 
 Pstack mode is enabled. Interpret the user's natural-language goal semantically
-and select the installed specialist skill that best fits, then invoke it
-explicitly via /skill:name (models do not reliably self-load skills).
+and select the installed specialist skill that best fits, then read its
+SKILL.md with the read tool. Slash commands are user input, not shell commands.
 Manual slash commands are overrides, not a prerequisite.
 
 ## Runtime invariants
@@ -27,8 +29,13 @@ Manual slash commands are overrides, not a prerequisite.
   explicit per-run models. Without the "subagent" tool, fall back to
   numbered sequential passes, one per role, switching the session model
   between passes.
+- Before dispatch, read the model configuration path below. Pass the full
+  configured selector, including any thinking suffix; agent defaults apply
+  only when the role has no override. Let the runtime allocate child session
+  directories; a shared sessionDir can collide during parallel launches.
 - Writers run isolated: pass "worktree: true" plus a gate, and merge only
-  the selected result with user confirmation. Readers omit the flag.
+  the selected result within the user's authorized scope. Competing proposals
+  require selection before integration. Readers omit the flag.
 - Blind parallel candidates as Candidate A/B/C; never name models in
   shared artifacts. Cross-judge on a contrasting model family.
 - Verify every claim against the real surface (commands run, files read,
@@ -73,9 +80,7 @@ export default function pstackPi(pi: ExtensionAPI): void {
     },
   });
 
-  pi.registerCommand("pstack-status", {
-    description: "Show pstack mode, guardrails, and router state",
-    handler: async (_args, ctx) => {
+  const status = async () => {
       const agentDir = process.env.PI_CODING_AGENT_DIR ?? join(homedir(), ".pi", "agent");
       const readJson = async (path: string): Promise<unknown> => {
         try {
@@ -89,23 +94,53 @@ export default function pstackPi(pi: ExtensionAPI): void {
         extensionConfig: await readJson(join(agentDir, "extensions", "subagent", "config.json")),
       });
       const updates = await checkCompanionUpdates(undefined, COMPANION_PINS);
+      const delegationAvailable = pi.getActiveTools().includes("subagent");
+      const clean = findings.length === 0 && delegationAvailable;
       const updateLine =
         updates.stale.length === 0
-          ? `Companions: up to date${updates.checkedAt ? "" : " (offline check)"}`
-          : `Updates available: ${updates.stale.join(", ")} — pi install <name>@latest`;
+          ? `Companion pins: ${updates.checkedAt ? "no newer versions found" : "update check unavailable"}`
+          : `Newer companion versions available: ${updates.stale.join(", ")}. Pstack uses tested pins.`;
       const lines = [
-        `Pstack status: ${!enabled ? "off" : findings.length === 0 ? "clean" : "drift detected"}`,
+        `Pstack status: ${!enabled ? "off" : clean ? "clean" : "drift detected"}`,
         `Router: ${routerSent ? "loaded" : "pending"}`,
+        `Delegation: ${delegationAvailable ? "subagent tool active" : "missing subagent tool; install pi-subagents and reload Pi"}`,
         ...(findings.length === 0
           ? ["Guardrails: 6 adapters disabled, no global worktree default, depth >= 2"]
           : findings.map((finding) => `Missing: ${finding.where} ${finding.key} (need ${finding.expected})`)),
         updateLine,
       ];
-      ctx.ui.notify(lines.join("\n"), findings.length === 0 ? "info" : "error");
+      return { text: lines.join("\n"), clean };
+  };
+  pi.registerCommand("pstack-status", {
+    description: "Show pstack mode, guardrails, and router state",
+    handler: async (_args, ctx) => {
+      const result = await status();
+      ctx.ui.notify(result.text, result.clean ? "info" : "error");
+    },
+  });
+  pi.registerTool({
+    name: "pstack_status",
+    label: "Pstack status",
+    description: "Check pstack's local delegation settings and companion update status without changing configuration.",
+    parameters: Type.Object({}),
+    async execute() {
+      const result = await status();
+      return { content: [{ type: "text" as const, text: result.text }], details: { clean: result.clean } };
     },
   });
 
-  pi.on("session_start", async () => {
+  const restore = (_event: unknown, ctx: ExtensionContext) => {
+    enabled = true;
+    for (const entry of ctx.sessionManager.getBranch()) {
+      if (entry.type === "custom" && entry.customType === MODE_ENTRY &&
+          typeof entry.data === "object" && entry.data !== null && "enabled" in entry.data &&
+          typeof entry.data.enabled === "boolean") enabled = entry.data.enabled;
+    }
+    routerSent = false;
+  };
+  pi.on("session_start", restore);
+  pi.on("session_tree", restore);
+  pi.on("session_compact", async () => {
     routerSent = false;
   });
 
@@ -117,7 +152,7 @@ export default function pstackPi(pi: ExtensionAPI): void {
       return {
         message: {
           customType: ROUTER_ENTRY,
-          content: FULL_ROUTER,
+          content: `${FULL_ROUTER}\n\nInstalled skills: ${join(dirname(fileURLToPath(import.meta.url)), "..", "skills")}/<name>/SKILL.md\nModel configuration: ${join(process.env.PI_CODING_AGENT_DIR ?? join(homedir(), ".pi", "agent"), "pstack", "models.md")}\nThe Pi agent directory from PI_CODING_AGENT_DIR overrides every ~/.pi/agent path in skill prose. Resolve auto/inherit-parent to the actual current model. For panels larger than four seats, reuse the matching role agent with unique run keys and explicit models.`,
           display: false,
           details: {},
         },

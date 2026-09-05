@@ -11,7 +11,7 @@ The context window is finite and non-renewable within a session. Every token tha
 **Why:** Context overflow degrades reasoning quality, creates compression artifacts, and halts progress. Unlike compute or time, context spent inside a session cannot be reclaimed.
 
 **Pattern:**
-- **Isolate large payloads.** Route verbose outputs, screenshots, and large documents to sequential passes that digest them; the session context gets summaries, not raw data. PI has no subagents, so the pass is a bounded read step or a script that reduces the payload before it enters the conversation.
+- **Isolate large payloads.** Route verbose outputs, screenshots, and large documents to fresh subagent passes that digest them; the session context gets summaries, not raw data. Use pi-subagents when available; otherwise use a bounded read or a script that reduces the payload before it enters the conversation.
 - **Don't read what you won't use.** Read selectively based on relevance. If a file isn't needed for the current task, skip it.
 - **Keep frequently used content inline.** Templates and references used on every invocation belong in the skill file, not in separate files that cost a read each time.
 - **Size phases and cap scope.** Limit files per phase, set turn budgets, account for mechanism costs.

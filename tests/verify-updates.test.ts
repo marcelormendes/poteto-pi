@@ -42,7 +42,7 @@ describe("companion update check", () => {
     expect(first.checkedAt).toBeDefined();
     const second = await checkCompanionUpdates(() => {
       throw new Error("must use cache, not network");
-    });
+    }, { "pi-subagents": "^0.64.0" });
     expect(second.fresh).toBe(true);
     expect(second.stale).toEqual([]);
     expect(calls).toBe(1);
@@ -54,7 +54,7 @@ describe("companion update check", () => {
       throw new Error("offline");
     });
     expect(result.stale).toEqual([]);
-    expect(result.checkedAt).toBeDefined();
+    expect(result.checkedAt).toBeUndefined();
   });
 
   test("writing the cache requires no pre-existing directory", async () => {
@@ -62,10 +62,28 @@ describe("companion update check", () => {
     await mkdir(join(home, "agent", "pstack"), { recursive: true });
     await writeFile(
       join(home, "agent", "pstack", "update-check.json"),
-      JSON.stringify({ at: new Date().toISOString(), stale: [] }),
+      JSON.stringify({ at: new Date().toISOString(), stale: [], pins: JSON.stringify([]) }),
     );
-    const result = await checkCompanionUpdates(stubFetch({}));
+    const result = await checkCompanionUpdates(stubFetch({}), {});
     expect(result.fresh).toBe(true);
     expect(result.stale).toEqual([]);
+  });
+
+  test("a changed pin set invalidates the cache", async () => {
+    await useHome();
+    await checkCompanionUpdates(stubFetch({ example: "1.0.0" }), { example: "1.0.0" });
+    const result = await checkCompanionUpdates(stubFetch({ other: "2.0.0" }), { other: "1.0.0" });
+    expect(result.fresh).toBe(false);
+    expect(result.stale).toEqual(["other@2.0.0"]);
+  });
+
+  test("partial registry failures never become a cached clean verdict", async () => {
+    await useHome();
+    const pins = { one: "1.0.0", two: "1.0.0" };
+    const result = await checkCompanionUpdates(stubFetch({ one: "1.0.0" }), pins);
+    expect(result.checkedAt).toBeUndefined();
+    const retry = await checkCompanionUpdates(stubFetch({ one: "1.0.0", two: "2.0.0" }), pins);
+    expect(retry.fresh).toBe(false);
+    expect(retry.stale).toEqual(["two@2.0.0"]);
   });
 });

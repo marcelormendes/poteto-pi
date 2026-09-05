@@ -1,4 +1,4 @@
-import { appendFile, mkdir, readFile, readdir } from "node:fs/promises";
+import { appendFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
@@ -21,12 +21,13 @@ const todayFile = (): string => {
 const ensureMemoryDir = async (): Promise<void> => {
   await mkdir(join(memoryDir(), "daily"), { recursive: true });
   try {
-    await readFile(memoryFile(), "utf8");
-  } catch {
-    await appendFile(
+    await writeFile(
       memoryFile(),
       "# Pstack memory\n\nDurable facts worth keeping across sessions. One line per fact.\n",
+      { flag: "wx" },
     );
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
   }
 };
 
@@ -74,7 +75,7 @@ export function registerMemoryTool(pi: ExtensionAPI): void {
       }
       if (!params.query) return textResult("recall requires query");
       const daily = await readdir(join(memoryDir(), "daily")).catch(() => [] as string[]);
-      const files = [memoryFile(), ...daily.slice(-30).map((name) => join(memoryDir(), "daily", name))];
+      const files = [memoryFile(), ...daily.filter((name) => /^\d{4}-\d{2}-\d{2}\.md$/.test(name)).sort().slice(-30).reverse().map((name) => join(memoryDir(), "daily", name))];
       const hits = await grepFiles(files, params.query);
       return textResult(hits.join("\n") || "(no matches)");
     },

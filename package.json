@@ -22,15 +22,19 @@
     "extension/",
     "skills/",
     "agents/",
-    "scripts/",
     "README.md",
     "LICENSE",
-    "PI-DELTA.md"
+    "PI-DELTA.md",
+    "PORTING.md",
+    "docs/",
+    "scripts/generate-agents.ts",
+    "scripts/e2e-roles.sh",
+    "scripts/e2e/"
   ],
   "scripts": {
-    "test": "bun test",
+    "test": "bun test ./tests ./skills/poteto-mode/scripts && python3 -m unittest discover -s scripts/e2e -p 'test_*.py'",
     "typecheck": "tsc --noEmit",
-    "prepack": "rm -rf skills/poteto-mode/scripts/node_modules"
+    "test:e2e": "python3 scripts/e2e/run.py"
   },
   "dependencies": {},
   "peerDependencies": {

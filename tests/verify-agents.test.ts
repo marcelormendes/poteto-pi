@@ -6,8 +6,8 @@ const agentsDir = join(import.meta.dir, "..", "agents");
 const files = (await readdir(agentsDir)).filter((name) => name.endsWith(".md"));
 
 describe("pstack role agents", () => {
-  test("roster is complete: 16 scalars plus five 4-seat panels", () => {
-    expect(files.length).toBe(36);
+  test("roster includes Comment Sicko, 16 workflow roles, and five 4-seat panels", () => {
+    expect(files.length).toBe(37);
   });
 
   test("every agent declares name, description, and model", async () => {
@@ -34,7 +34,8 @@ describe("pstack role agents", () => {
     ];
     for (const file of readOnly) {
       const source = await readFile(join(agentsDir, file), "utf8");
-      expect(source, `${file} tools`).toMatch(/^tools: \[read, grep, find, ls\]$/m);
+      const tools = /^tools: (.+)$/m.exec(source)?.[1]?.split(",").map((tool) => tool.trim());
+      expect(tools, `${file} Pi tool names`).toEqual(["read", "grep", "find", "ls"]);
     }
     for (const file of ["pstack-feature.md", "pstack-arena-runners-1.md", "pstack-swarm-worker.md"]) {
       const source = await readFile(join(agentsDir, file), "utf8");

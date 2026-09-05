@@ -1,81 +1,115 @@
 # poteto-pi
 
-Pstack methodology as a PI.dev package: 44 skills, 23 playbooks, 36 local
-subagent roles, and a routing extension. Ported from upstream
-`cursor/plugins` pstack at `7314f72`.
+Lauren Tan's [pstack](https://github.com/cursor/plugins/tree/main/pstack)
+for the Pi coding harness: 45 skills, 23 playbooks, 37 local role agents,
+and a routing extension. The methodology is hers: go deep first, prove
+behavior on the real surface, write less code, then parallelize with confidence.
+The vendored source is pinned at `7314f72` and matches upstream pstack at
+`93b00b89ef425a9c1bac0d0b317dfc49c930ac99` (checked September 4, 2026).
 
-## Credits
+## Install and set up
 
-All methodology is Lauren Tan's ([@poteto](https://x.com/poteto)) pstack:
-go deep first, verify against the real surface, build the lever, then
-parallelize with confidence. This package contributes only the PI.dev
-adaptation layer (sequential fallbacks, role agents, guardrails, setup).
-Upstream: https://github.com/cursor/plugins/tree/main/pstack (MIT).
-If pstack makes you faster, the credit is hers.
+Validated with Pi 0.84.4. Bun runs the bundled orchestration and PR
+watching helpers; Python 3 runs the live verification suite.
 
-## Companion packages
-
-This package ships only its own resources. Setup installs these pinned
-companions separately so copies never double-register:
-
-| package | role |
-|---|---|
-| `pi-subagents@0.64.0` | local delegation (required) |
-| `pi-mcp-adapter@2.32.1` | MCP servers as tools (required) |
-| `@narumitw/pi-goal@0.54.4` | `/goal` runs |
-| `pi-web-access@0.27.0` | web fetch/search tools |
+From another project, install this checkout with its absolute path:
 
 ```bash
-pi install -l ./poteto-pi
+pi install /absolute/path/to/poteto-pi
+pi
 ```
+
+Then run:
+
+```text
+/skill:setup-pstack
+```
+
+Setup detects available models, proposes a role table, verifies credentials
+with real child calls, and writes `pstack/models.md` inside the Pi agent
+directory. `PI_CODING_AGENT_DIR` overrides the default `~/.pi/agent`.
+No credentials belong in that model table.
+
+Companions are separate Pi packages. Setup installs the missing required
+companion and preserves existing installations:
+
+| Package | Purpose |
+|---|---|
+| `pi-subagents@0.64.0` | Required: local subagent execution |
+| `pi-mcp-adapter@2.32.1` | Optional: MCP evidence sources |
+| `@narumitw/pi-goal@0.54.4` | Optional: goal runs |
+| `pi-web-access@0.27.0` | Optional: web research |
+
+After installing a companion during an active session, reload Pi to make
+its tools available. Do not remove existing companions to install pstack.
 
 ## Use
 
-The extension injects the routing contract at session start. Invoke skills
-explicitly (models do not reliably self-load skills):
-
 ```text
-/skill:poteto-mode build <feature> behind a flag, verify it really works
+/skill:poteto-mode fix the blank-input bug; reproduce first and verify the CLI
 /skill:how how does the session store work?
-/skill:arena compare two designs for the cache
-/skill:swarm check every package against its check.sh
+/skill:architect compare designs for the cache; sketch only
+/skill:arena compare two implementations of the cache
+/skill:swarm check each package with its own verification command
 /skill:interrogate review this diff
+/skill:create-verification-skill
 ```
 
-`/pstack-mode on|off|status`, `/pstack-status`.
+The extension enables routing by default. `/pstack-mode on|off|status`
+controls it per session; `/pstack-status` checks setup. Agents can use the
+`pstack_status` tool for the same check. Mode and todos follow the active
+session branch and survive reloads.
 
-## Layout
+Panels use fresh local subagents with explicit per-run model selectors.
+Writer runs request managed Git worktrees and verification gates; readers
+can work outside Git. The parent reviews and integrates results within the
+user's authorized scope. Competing proposals require selection before
+integration. If delegation is unavailable, skills disclose their sequential
+fallback and the loss of independent context.
 
-- `extension/` — router injection (`before_agent_start`), `pstack_todo` and
-  `pstack_transcripts` custom tools, `/pstack-mode`, `/pstack-status`.
-- `skills/` — ported skill tree (methodology prose, references, scripts).
-- `upstream-skills/` — immutable upstream source at the pinned commit.
-- `planning/` — source planning docs plus `STUDY.md` migration notes.
-- `PORTING.md`, `PI-DELTA.md` — port rules and platform deltas.
-
-## PI adaptations (vs upstream)
-
-- Delegation runs on bundled `pi-subagents`: fan-out panels target the
-  `subagent` tool with `pstack-*` role agents, `worktree: true` isolation
-  for writers, explicit per-run models. Sequential passes remain as the
-  no-extension fallback path in every skill. (Skill-by-skill retarget at
-  the `subagent` tool is in progress; the fallback text is current.)
-- No programmatic model routing: the router names a role and `--model`
-  selector; the user switches mid-session.
-- `/loop` and `/goal` come from the bundled companions, not PI core.
-- `make-bot-ui` (Grok/Tailscale) and Benny automations are dropped.
-- `~/.pi/agent/pstack/models.md` replaces the Cursor rules override file.
-- Guardrails are structural: external-CLI adapter agents disabled via
-  settings, worktree isolation defaulted on, `/pstack-status` fails closed
-  on drift. See `planning/ANALYSIS-subagents.md`.
-
-If you already installed any companion standalone, remove it first:
-bundled copies load from this package and duplicates would double-register
-tools. `pi remove npm:<name>` before installing poteto-pi.
+The package also supplies `pstack_todo`, bounded project-scoped
+`pstack_transcripts`, optional `pstack_memory`, and a bounded `loop` skill.
+`loop` is a skill invocation, not a Pi core scheduling command.
 
 ## Verify
 
 ```bash
-bun test
+bun install --frozen-lockfile
+bun run test
 bun run typecheck
+bun run --cwd skills/poteto-mode/scripts typecheck
 ```
+
+The live suite installs packages in an isolated Pi agent directory and
+copies only the authorized OpenCode Go and OpenAI Codex credentials with
+private file permissions. It retains prompts, Pi JSONL sessions, child
+metadata, and result summaries. It never deletes an existing evidence root
+or changes `HOME`.
+
+```bash
+python3 scripts/e2e/run.py --prepare --root /tmp/my-pstack-e2e --skills all --timeout 720
+python3 scripts/e2e/run.py --root /tmp/my-pstack-e2e --roles all
+```
+
+Use `--run-label retry-1` to retain another attempt without overwriting
+previous evidence. Live checks consume model quota. A completed assistant
+reply alone does not prove delegated execution; required roles must have
+successful child metadata and actual model responses.
+
+The [September 4 audit](docs/audit-2026-09-04.md) records the fixes, tested
+versions, per-skill results, and retained evidence paths.
+
+## Source and scope
+
+- `extension/`: Pi tools, session state, and routing.
+- `skills/`: the runnable port, references, playbooks, and helpers.
+- `agents/`: generated Pi role definitions; regenerate with
+  `bun scripts/generate-agents.ts`.
+- `upstream-skills/` and `upstream-docs/`: immutable upstream reference.
+- `planning/`: historical design notes, including the deferred OMP port.
+- `PORTING.md` and `PI-DELTA.md`: current adaptation rules and boundaries.
+
+Cloud agents, SSH/Tailscale execution, Grok UI, and Benny automations are
+outside this local port. The experimental `scripts/pi-fleet` is excluded
+from the installable package. All upstream methodology remains MIT licensed;
+see [LICENSE](LICENSE).

@@ -5,9 +5,8 @@ import { join } from "node:path";
 const root = join(import.meta.dir, "..");
 const skillsDir = join(root, "skills");
 
-const skillDirs = (await readdir(skillsDir)).filter(
-  async (name) => (await stat(join(skillsDir, name)).catch(() => null))?.isDirectory(),
-);
+const skillDirs = (await readdir(skillsDir, { withFileTypes: true }))
+  .filter((entry) => entry.isDirectory()).map((entry) => entry.name);
 
 const FORBIDDEN = [
   "subagent_type",

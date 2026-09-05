@@ -6,9 +6,9 @@ disable-model-invocation: true
 
 # No comments
 
-Comments are guilty unless they document a public contract or a non-obvious external constraint code cannot express. Run the Comment Sicko checklist below as a read-only prose pass in this session, then act on accepted findings. No subagent: you are the reviewer and the fixer, so keep the two roles distinct by writing the report before editing anything.
+Comments are guilty unless they document a public contract or a non-obvious external constraint code cannot express. Launch `pstack-comment-sicko` with the `subagent` tool, `context: "fresh"`, and the explicit `judgment and prose` model from the pstack model configuration. Give it the declared scope and the checklist below. It returns a read-only report; the parent applies accepted changes. If delegation is unavailable, report the loss of independent review and apply the checklist in a separate numbered pass.
 
-Authoring agents defend comments. Defer to the reviewer's fresh perspective you just wrote down.
+Authoring agents defend comments. Defer to the independent reviewer's evidence.
 
 ## The checklist
 
@@ -38,7 +38,7 @@ Use the caller's files or diff. Otherwise use the current diff against the base 
 
 ## Steps
 
-1. Run the checklist over the scope and write the report, per the shape above. Do not restate the checklist in the report; apply it.
+1. Launch the reviewer with the checklist and scope, await its result, and inspect the report. Do not restate the checklist in the report; apply it.
 2. Inspect the report and diff. Reject application-code edits, scope escapes, exception-protected deletions, misstated `MUST KILL` reasons, and flags that treat kept intentional code as guilty. Reshape flags on our-code surprises stay actionable. Do not restore those comments. A keep survives only with proof it is about something we cannot change. Audit missed scoped lint and TypeScript suppressions. Correctness or safety suppressions stay actionable `MUST KILL`s. Restore deletions only with exact exceptions and scoped proof. Before accepting thin `IMPORTANT` or `do not remove` kills or keeps, run the **how** or **why** skill on their symbol. If a kill is ambiguous, do not restore. If a keep is refuted or still ambiguous, delete it. Re-run the checklist once when a report was rejected, with the failure named. Reject a second, report it open, and fail this skill run.
 3. Fix trivial accepted flags directly by deleting a dead path, dropping a parameter, or using the real API. If any fix needs a shape, run the **architect** skill once for the accepted set and surrounding code. Stop at the sketch. Architect shapes. Step 4 implements.
 4. Implement the smallest root-cause fix in scope. Remove every named workaround. If the root cause is out of scope, land the smallest in-scope fix and report the rest open. The **principle-fix-root-causes** and **principle-redesign-from-first-principles** skills guide intent only: fix real causes, redesign as if requirements always existed, never bolt on symptom guards. Neither authorizes widening the fence nor fixing instances outside it.
